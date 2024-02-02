@@ -138,12 +138,15 @@ public:
 	// LAB3: Dibujar triangulo Interpolado con vertices en p0, p1, p2
 	// TODO: Extra. Compress the parameters into an struct (already created on top, just needs to be added to the function signature)
 
-	/*called as sTriangleInfo triangleInfo(v0, v1, v2, c0, c1, c2, texture, uv0, uv1, uv2);
-	image.DrawTriangleInterpolated(triangleInfo, zbuffer);*/
+	/*
+	called as sTriangleInfo triangleInfo(v0, v1, v2, c0, c1, c2, texture, uv0, uv1, uv2);
+	image.DrawTriangleInterpolated(triangleInfo, zbuffer);
+	*/
 
-	// void DrawTriangleInterpolated(const sTriangleInfo& triangle, FloatImage* zbuffer = nullptr);
+	// void DrawTriangleInterpolated(const sTriangleInfo &triangle, FloatImage *zbuffer = nullptr);
 
-	// void DrawTriangleInterpolated(const Vector3 &p0, const Vector3 &p1, const Vector3 &p2, const Color &c0, const Color &c1, const Color &c2, FloatImage *zbuffer = nullptr, Image *texture = nullptr, const Vector2 &uv0, const Vector2 &uv1, const Vector2 &uv2);
+	void DrawTriangleInterpolated(const Vector3 &p0, const Vector3 &p1, const Vector3 &p2, const Color &c0, const Color &c1, const Color &c2, FloatImage *zbuffer = nullptr, Image *texture = nullptr, const Vector2 &uv0 = Vector2(0, 0), const Vector2 &uv1 = Vector2(0, 0), const Vector2 &uv2 = Vector2(0, 0));
+	// FIXME: Change the nullptr and 0,0,0 from default value
 
 	// LAB1: Rasterizar una imagen por pantalla
 	void DrawImage(const Image &image, int x, int y, bool top);

@@ -80,7 +80,7 @@ void Application::Init(void)
 	entity3.mesh = *mesh_cleo;
 
 	// Establecer las matrices de modelo para posicionar las entidades
-	entity1.modelMatrix.SetTranslation(0, 0.2, -0.4);	  // Posiciona entity1
+	entity1.modelMatrix.SetTranslation(0, 0, 0);		  // Posiciona entity1
 	entity2.modelMatrix.SetTranslation(-0.5, -0.1, -0.5); // Posiciona entity2 en el origen
 	entity3.modelMatrix.SetTranslation(0.3, -0.4, -0.5);  // Posiciona entity3
 
@@ -101,7 +101,10 @@ void Application::Render(void)
 {
 	if (cameraState == DRAW_SINGLE)
 	{
-		entity1.Render(&framebuffer, camera, Color::WHITE);
+		// Creamos un zbuffer para la pantalla
+		FloatImage *zbuffer = new FloatImage(framebuffer.width, framebuffer.height);
+		zbuffer->Fill(100000.0f);
+		entity1.Render(&framebuffer, camera, Color::WHITE, zbuffer);
 	}
 	else if (cameraState == DRAW_MULTIPLE)
 	{

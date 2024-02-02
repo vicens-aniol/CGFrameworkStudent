@@ -460,7 +460,7 @@ void Image::DrawTriangle(const Vector2 &p0, const Vector2 &p1, const Vector2 &p2
 			{
 				for (int x = table[y].minx; x <= table[y].maxx; x++)
 				{
-					SetPixel(x, y, fillColor);
+					SetPixelSafe(x, y, fillColor);
 				}
 			}
 		}
@@ -472,10 +472,71 @@ void Image::DrawTriangle(const Vector2 &p0, const Vector2 &p1, const Vector2 &p2
 	DrawLineDDA(p2.x, p2.y, p0.x, p0.y, borderColor);
 }
 
-/*void Image::DrawTriangleInterpolated(const Vector3 &p0, const Vector3 &p1, const Vector3 &p2, const Color &c0, const Color &c1, const Color &c2, FloatImage *zbuffer, Image *texture, const Vector2 &uv0, const Vector2 &uv1, const Vector2 &uv2)
+void Image::DrawTriangleInterpolated(const Vector3 &p0, const Vector3 &p1, const Vector3 &p2, const Color &c0, const Color &c1, const Color &c2, FloatImage *zbuffer, Image *texture, const Vector2 &uv0, const Vector2 &uv1, const Vector2 &uv2)
 {
 	// TODO: 2. Implementación de Triangle Interpolated and 3.add zbuffer and 4.textures
-}*/
+	std::vector<Cell> table(height);
+
+	ScanLineDDA(p0.x, p0.y, p1.x, p1.y, table);
+	ScanLineDDA(p1.x, p1.y, p2.x, p2.y, table);
+	ScanLineDDA(p2.x, p2.y, p0.x, p0.y, table);
+
+	// Creamos la matriz de baricentro
+	Matrix44 m;
+	m.M[0][0] = p0.x;
+	m.M[0][1] = p0.y;
+	m.M[0][2] = 1;
+	m.M[1][0] = p1.x;
+	m.M[1][1] = p1.y;
+	m.M[1][2] = 1;
+	m.M[2][0] = p2.x;
+	m.M[2][1] = p2.y;
+	m.M[2][2] = 1;
+
+	// Hacemos la inversa de la matriz
+	m.Inverse();
+
+	// Llenamos el triángulo, utilizando el algoritmo AET (Active Edge Table), con el color en funcion de la distancia al baricentro
+
+	for (int y = 0; y < table.size(); y++)
+	{
+		if (table[y].minx <= table[y].maxx)
+		{
+			for (int x = table[y].minx; x <= table[y].maxx; x++)
+			{
+				// Calculamos la baricentro de la posición actual
+				Vector3 bCoords = m * Vector3(x, y, 1);
+
+				// Clampeamos las coordenadas baricentro entre 0 y 1
+				bCoords.Clamp(0, 1);
+
+				float u = bCoords.x;
+				float v = bCoords.y;
+				float w = 1 - u - v;
+
+				// Calculamos el color en función de la distancia al baricentro
+				Color color = c0 * u + c1 * v + c2 * w;
+
+				// Calculamos la distancia al baricentro para poder interpolar la profundidad para el zdepth
+				float z = p0.z * u + p1.z * v + p2.z * w;
+				// Si se ha pasado un zbuffer, comprobamos si la posición actual es más cercana que la que ya hay en el zbuffer
+				if (zbuffer != nullptr)
+				{
+
+					if (z < zbuffer->GetPixel(x, y))
+					{
+						zbuffer->SetPixel(x, y, z);
+						SetPixelSafe(x, y, color);
+					}
+				}
+				else
+				{
+					SetPixelSafe(x, y, color);
+				}
+			}
+		}
+	}
+}
 
 void Image::DrawImage(const Image &image, int x, int y, bool top)
 {
