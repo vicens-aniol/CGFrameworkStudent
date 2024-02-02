@@ -27,7 +27,7 @@ public:
     Mesh mesh;
 
     // Lab 3: Texture for the entity
-    Texture *texture;
+    Image *texture;
 
     // Constructor por defecto
     Entity();

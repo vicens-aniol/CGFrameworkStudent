@@ -86,6 +86,12 @@ void Application::Init(void)
 
 	camera = new Camera();
 
+	Image *texture1 = new Image();
+
+	!texture1->LoadTGA("textures/lee_color_specular.tga") ? "No se ha podido cargar la textura" : "Textura cargada correctamente";
+
+	entity1.texture = texture1;
+
 	// Configurar la vista de la cámara y la perspectiva
 	// camera->Move(Vector3(0, 0, 25)); // Mover la cámara hacia atrás
 	camera->LookAt(Vector3(0, 0.2, 0.75), Vector3(0, 0.2, 0), Vector3::UP);
@@ -104,6 +110,7 @@ void Application::Render(void)
 		// Creamos un zbuffer para la pantalla
 		FloatImage *zbuffer = new FloatImage(framebuffer.width, framebuffer.height);
 		zbuffer->Fill(100000.0f);
+
 		entity1.Render(&framebuffer, camera, Color::WHITE, zbuffer);
 	}
 	else if (cameraState == DRAW_MULTIPLE)

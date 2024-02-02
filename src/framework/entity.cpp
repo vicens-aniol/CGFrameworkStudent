@@ -34,15 +34,6 @@ void Entity::setMesh(const Mesh &mesh)
 
 void Entity::Render(Image *framebuffer, Camera *camera, Color c, FloatImage *zBuffer)
 {
-    // Lab 3 : Texturas en la malla
-    if (texture == nullptr)
-    {
-        // Use colors!
-    }
-    else
-    {
-        // Use texture!
-    }
 
     // Obtener los vértices de la malla
     const std::vector<Vector3> &vertices = mesh.GetVertices();
@@ -83,7 +74,9 @@ void Entity::Render(Image *framebuffer, Camera *camera, Color c, FloatImage *zBu
 
         // TODO: 1. Pintar los triangulos con el color c
 
-        framebuffer->DrawTriangleInterpolated(triangleVertices[0], triangleVertices[1], triangleVertices[2], Color::RED, Color::GREEN, Color::BLUE, zBuffer);
+        std::vector<Vector2> uvs = mesh.GetUVs();
+
+        framebuffer->DrawTriangleInterpolated(triangleVertices[0], triangleVertices[1], triangleVertices[2], Color::RED, Color::GREEN, Color::BLUE, zBuffer, texture, uvs[i], uvs[i + 1], uvs[i + 2]);
 
         // framebuffer->DrawTriangle(Vector2(triangleVertices[0].x, triangleVertices[0].y), Vector2(triangleVertices[1].x, triangleVertices[1].y), Vector2(triangleVertices[2].x, triangleVertices[2].y), Color::WHITE, true, c);
 

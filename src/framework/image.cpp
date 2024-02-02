@@ -474,6 +474,7 @@ void Image::DrawTriangle(const Vector2 &p0, const Vector2 &p1, const Vector2 &p2
 
 void Image::DrawTriangleInterpolated(const Vector3 &p0, const Vector3 &p1, const Vector3 &p2, const Color &c0, const Color &c1, const Color &c2, FloatImage *zbuffer, Image *texture, const Vector2 &uv0, const Vector2 &uv1, const Vector2 &uv2)
 {
+
 	// TODO: 2. Implementación de Triangle Interpolated and 3.add zbuffer and 4.textures
 	std::vector<Cell> table(height);
 
@@ -497,7 +498,6 @@ void Image::DrawTriangleInterpolated(const Vector3 &p0, const Vector3 &p1, const
 	m.Inverse();
 
 	// Llenamos el triángulo, utilizando el algoritmo AET (Active Edge Table), con el color en funcion de la distancia al baricentro
-
 	for (int y = 0; y < table.size(); y++)
 	{
 		if (table[y].minx <= table[y].maxx)
@@ -515,19 +515,28 @@ void Image::DrawTriangleInterpolated(const Vector3 &p0, const Vector3 &p1, const
 				float w = 1 - u - v;
 
 				// Calculamos el color en función de la distancia al baricentro
-				Color color = c0 * u + c1 * v + c2 * w;
+				// Color color = c0 * u + c1 * v + c2 * w;
+				Color color = Color::BLACK;
 
 				// Calculamos la distancia al baricentro para poder interpolar la profundidad para el zdepth
 				float z = p0.z * u + p1.z * v + p2.z * w;
-				// Si se ha pasado un zbuffer, comprobamos si la posición actual es más cercana que la que ya hay en el zbuffer
-				if (zbuffer != nullptr)
-				{
 
-					if (z < zbuffer->GetPixel(x, y))
+				// Si se ha pasado un zbuffer, comprobamos si la posición actual es más cercana que la que ya hay en el zbuffer
+				if (zbuffer != nullptr && z < zbuffer->GetPixel(x, y))
+				{
+					if (texture == nullptr)
 					{
-						zbuffer->SetPixel(x, y, z);
-						SetPixelSafe(x, y, color);
+						// color = c0 * u + c1 * v + c2 * w;
 					}
+					else
+					{
+						// Interpolamos las coordenadas de UV
+						Vector2 uv = uv0 * u + uv1 * v + uv2 * w;
+						color = texture->GetPixel(uv.x, uv.y);
+					}
+
+					zbuffer->SetPixel(x, y, z);
+					SetPixelSafe(x, y, color);
 				}
 				else
 				{
