@@ -78,26 +78,19 @@ void Entity::Render(Image *framebuffer, Camera *camera, Color c, FloatImage *zBu
 
         // Cojemos los UVs de la malla
         std::vector<Vector2> uvs = mesh.GetUVs();
-        // TODO: AQUI SE TIENEN QUE PONER LOS IFS
-
-        // printf("Modo: %d\n", mode);
-
-        // occlusion ? zBuffer = nullptr : zBuffer = zBuffer;
-        // mode == eRenderMode::POINTCLOUD ? texture = texture : texture = nullptr;
-
-        // printf("Occlusion: %d\n", occlusion);
-        // printf("ZBuffer: %d\n", zBuffer);
-        // printf("Texture: %d\n", texture);
 
         // Cambiar entre mesh texture o el plain color
-
         if (mode == eRenderMode::TRIANGLES)
         {
             framebuffer->DrawTriangle(Vector2(triangleVertices[0].x, triangleVertices[0].y), Vector2(triangleVertices[1].x, triangleVertices[1].y), Vector2(triangleVertices[2].x, triangleVertices[2].y), Color::BLUE, true, Color::BLUE);
         }
         else
         {
-            framebuffer->DrawTriangleInterpolated(triangleVertices[0], triangleVertices[1], triangleVertices[2], Color::RED, Color::GREEN, Color::BLUE, conditionalZBuffer, conditionalTexture, uvs[i], uvs[i + 1], uvs[i + 2]);
+            // Creación de la struct con toda la información del triangulo
+
+            Image::sTriangleInfo triangle(triangleVertices[0], triangleVertices[1], triangleVertices[2], Color::RED, Color::GREEN, Color::BLUE, conditionalTexture, uvs[i], uvs[i + 1], uvs[i + 2]);
+
+            framebuffer->DrawTriangleInterpolated(triangle, conditionalZBuffer);
         }
 
         // Dibujar las líneas del triángulo (Labs anteriores)

@@ -472,26 +472,26 @@ void Image::DrawTriangle(const Vector2 &p0, const Vector2 &p1, const Vector2 &p2
 	DrawLineDDA(p2.x, p2.y, p0.x, p0.y, borderColor);
 }
 
-void Image::DrawTriangleInterpolated(const Vector3 &p0, const Vector3 &p1, const Vector3 &p2, const Color &c0, const Color &c1, const Color &c2, FloatImage *zbuffer, Image *texture, const Vector2 &uv0, const Vector2 &uv1, const Vector2 &uv2)
+void Image::DrawTriangleInterpolated(const sTriangleInfo &triangle, FloatImage *zbuffer)
 {
 
 	// TODO: 2. Implementación de Triangle Interpolated and 3.add zbuffer and 4.textures
 	std::vector<Cell> table(height);
 
-	ScanLineDDA(p0.x, p0.y, p1.x, p1.y, table);
-	ScanLineDDA(p1.x, p1.y, p2.x, p2.y, table);
-	ScanLineDDA(p2.x, p2.y, p0.x, p0.y, table);
+	ScanLineDDA(triangle.vertices[0].x, triangle.vertices[0].y, triangle.vertices[1].x, triangle.vertices[1].y, table);
+	ScanLineDDA(triangle.vertices[1].x, triangle.vertices[1].y, triangle.vertices[2].x, triangle.vertices[2].y, table);
+	ScanLineDDA(triangle.vertices[2].x, triangle.vertices[2].y, triangle.vertices[0].x, triangle.vertices[0].y, table);
 
 	// Creamos la matriz de baricentro
 	Matrix44 m;
-	m.M[0][0] = p0.x;
-	m.M[0][1] = p0.y;
+	m.M[0][0] = triangle.vertices[0].x;
+	m.M[0][1] = triangle.vertices[0].y;
 	m.M[0][2] = 1;
-	m.M[1][0] = p1.x;
-	m.M[1][1] = p1.y;
+	m.M[1][0] = triangle.vertices[1].x;
+	m.M[1][1] = triangle.vertices[1].y;
 	m.M[1][2] = 1;
-	m.M[2][0] = p2.x;
-	m.M[2][1] = p2.y;
+	m.M[2][0] = triangle.vertices[2].x;
+	m.M[2][1] = triangle.vertices[2].y;
 	m.M[2][2] = 1;
 
 	// Hacemos la inversa de la matriz
@@ -519,7 +519,7 @@ void Image::DrawTriangleInterpolated(const Vector3 &p0, const Vector3 &p1, const
 				// Color color = Color::BLACK;
 
 				// Calculamos la distancia al baricentro para poder interpolar la profundidad para el zdepth
-				float z = p0.z * u + p1.z * v + p2.z * w;
+				float z = triangle.vertices[0].z * u + triangle.vertices[1].z * v + triangle.vertices[2].z * w;
 
 				// Si se ha pasado un zbuffer, comprobamos si la posición actual es más cercana que la que ya hay en el zbuffer
 				if (zbuffer != nullptr)
@@ -534,25 +534,25 @@ void Image::DrawTriangleInterpolated(const Vector3 &p0, const Vector3 &p1, const
 					}
 				}
 
-				if (texture == nullptr)
+				if (triangle.texture == nullptr)
 				{
-					color = c0 * u + c1 * v + c2 * w;
+					color = triangle.colors[0] * u + triangle.colors[1] * v + triangle.colors[2] * w;
 				}
 				else
 				{
 					// Interpolamos las coordenadas de UV en función de la distancia al baricentro
-					Vector2 uv = uv0 * u + uv1 * v + uv2 * w;
+					Vector2 uv = triangle.uvs[0] * u + triangle.uvs[1] * v + triangle.uvs[2] * w;
 
 					// Clameamos las coordenadas UV entre 0 y 1 para normalizarlas
 
 					uv.Clamp(0, 1);
 
 					// Adaptamos las coordenadas UV a las dimensiones de la textura
-					float texX = uv.x * (texture->width - 1);
-					float texY = uv.y * (texture->height - 1);
+					float texX = uv.x * (triangle.texture->width - 1);
+					float texY = uv.y * (triangle.texture->height - 1);
 
 					// Obtenemos el color del pixel de la textura en función de las coordenadas UV
-					color = texture->GetPixel(texX, texY);
+					color = triangle.texture->GetPixel(texX, texY);
 				}
 
 				SetPixelSafe(x, y, color);
