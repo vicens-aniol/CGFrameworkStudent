@@ -38,6 +38,10 @@ void Entity::Render(Image *framebuffer, Camera *camera, Color c, FloatImage *zBu
     // Obtener los vértices de la malla
     const std::vector<Vector3> &vertices = mesh.GetVertices();
 
+    // Crear un puntero condicional para el zBuffer y la textura, para que puedan ser nulos en caso de activarlo con los keybindings
+    FloatImage *conditionalZBuffer = occlusion ? nullptr : zBuffer;
+    Image *conditionalTexture = (mode == eRenderMode::POINTCLOUD) ? texture : nullptr;
+
     // Iterar a través de todos los triángulos en la malla
     for (int i = 0; i < vertices.size(); i += 3)
     {
@@ -76,17 +80,24 @@ void Entity::Render(Image *framebuffer, Camera *camera, Color c, FloatImage *zBu
         std::vector<Vector2> uvs = mesh.GetUVs();
         // TODO: AQUI SE TIENEN QUE PONER LOS IFS
 
-        occlusion ? zBuffer = nullptr : zBuffer = zBuffer;
-        mode == eRenderMode::POINTCLOUD ? texture = texture : texture = nullptr;
+        // printf("Modo: %d\n", mode);
+
+        // occlusion ? zBuffer = nullptr : zBuffer = zBuffer;
+        // mode == eRenderMode::POINTCLOUD ? texture = texture : texture = nullptr;
+
+        // printf("Occlusion: %d\n", occlusion);
+        // printf("ZBuffer: %d\n", zBuffer);
+        // printf("Texture: %d\n", texture);
 
         // Cambiar entre mesh texture o el plain color
+
         if (mode == eRenderMode::TRIANGLES)
         {
             framebuffer->DrawTriangle(Vector2(triangleVertices[0].x, triangleVertices[0].y), Vector2(triangleVertices[1].x, triangleVertices[1].y), Vector2(triangleVertices[2].x, triangleVertices[2].y), Color::BLUE, true, Color::BLUE);
         }
         else
         {
-            framebuffer->DrawTriangleInterpolated(triangleVertices[0], triangleVertices[1], triangleVertices[2], Color::RED, Color::GREEN, Color::BLUE, zBuffer, texture, uvs[i], uvs[i + 1], uvs[i + 2]);
+            framebuffer->DrawTriangleInterpolated(triangleVertices[0], triangleVertices[1], triangleVertices[2], Color::RED, Color::GREEN, Color::BLUE, conditionalZBuffer, conditionalTexture, uvs[i], uvs[i + 1], uvs[i + 2]);
         }
 
         // Dibujar las líneas del triángulo (Labs anteriores)

@@ -160,7 +160,6 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 		entity1.occlusion = !entity1.occlusion;
 		break;
 	case SDLK_t:
-
 		// Cambiamos entre el valor pointcloud y triangles
 		entity1.mode = (entity1.mode == eRenderMode::POINTCLOUD) ? eRenderMode::TRIANGLES : eRenderMode::POINTCLOUD;
 		break;

@@ -515,7 +515,7 @@ void Image::DrawTriangleInterpolated(const Vector3 &p0, const Vector3 &p1, const
 				float w = 1 - u - v;
 
 				// Calculamos el color en función de la distancia al baricentro
-				Color color = c0 * u + c1 * v + c2 * w;
+				Color color = Color::BLACK;
 				// Color color = Color::BLACK;
 
 				// Calculamos la distancia al baricentro para poder interpolar la profundidad para el zdepth
@@ -536,7 +536,7 @@ void Image::DrawTriangleInterpolated(const Vector3 &p0, const Vector3 &p1, const
 
 				if (texture == nullptr)
 				{
-					color = Color::BLUE;
+					color = c0 * u + c1 * v + c2 * w;
 				}
 				else
 				{
