@@ -30,151 +30,47 @@ void Application::Init(void)
 
 	framebuffer.Fill(Color::BLACK);
 
-	/* Creamos un loop para cargar todas las imagenes una al lado del otra con un loop
-	std::vector<const char *> imagePaths = {
-		"../res/images/clear.png",
-		"../res/images/load.png",
-		"../res/images/save.png",
-		"../res/images/eraser.png",
-		"../res/images/paint.png",
-		"../res/images/line.png",
-		"../res/images/rectangle.png",
-		"../res/images/circle.png",
-		"../res/images/triangle.png",
-		"../res/images/black.png",
-		"../res/images/white.png",
-		"../res/images/pink.png",
-		"../res/images/yellow.png",
-		"../res/images/red.png",
-		"../res/images/blue.png",
-		"../res/images/cyan.png",
-		"../res/images/green.png"};
-
-	std::vector<ButtonType> buttonTypes = {BTN_CLEAR, BTN_LOAD, BTN_SAVE, BTN_ERASER, BTN_PAINT, BTN_LINE, BTN_RECTANGLE, BTN_CIRCLE, BTN_TRIANGLE, BTN_BLACK, BTN_WHITE, BTN_PINK, BTN_YELLOW, BTN_RED, BTN_BLUE, BTN_CYAN, BTN_GREEN};
-
-	int toolbarIndexX = 10;
-
-	for (size_t i = 0; i < imagePaths.size(); ++i)
-	{
-		// Crea cada botón con su imagen y tipo correspondiente
-		toolbarButtons.emplace_back(imagePaths[i], Vector2(toolbarIndexX, 10), buttonTypes[i]);
-		toolbarIndexX += toolbarButtons.back().GetImage().width + 10; // Cogemos image y le sumamos 10 para que haya un espacio entre cada botón razonable
-	}
-
-	bool inactive = true;
-	*/
-
 	// Cargar las 3 mallas
 	Mesh *mesh_lee = new Mesh();
-	mesh_lee->LoadOBJ("meshes/lee.obj");
-
-	Mesh *mesh_anna = new Mesh();
-	mesh_anna->LoadOBJ("meshes/anna.obj");
-
-	Mesh *mesh_cleo = new Mesh();
-	mesh_cleo->LoadOBJ("meshes/cleo.obj");
+	mesh_lee->LoadOBJ("meshes/cleo.obj");
 
 	// Asignar la malla a las entidades
 	entity1.mesh = *mesh_lee;
-	entity2.mesh = *mesh_anna;
-	entity3.mesh = *mesh_cleo;
 
 	// Establecer las matrices de modelo para posicionar las entidades
-	entity1.modelMatrix.SetTranslation(0, -0.25, 0);	  // Posiciona entity1
-	entity2.modelMatrix.SetTranslation(-0.5, -0.1, -0.5); // Posiciona entity2 en el origen
-	entity3.modelMatrix.SetTranslation(0.3, -0.4, -0.5);  // Posiciona entity3
+	entity1.modelMatrix.SetTranslation(0, -0.25, 0); // Posiciona entity1
 
 	camera = new Camera();
 
 	Image *texture1 = new Image();
 
-	!texture1->LoadTGA("textures/lee_color_specular.tga", true) ? printf("No se ha podido cargar la textura") : printf("Textura cargada correctamente");
+	!texture1->LoadTGA("textures/cleo_color_specular.tga", true) ? printf("No se ha podido cargar la textura\n") : printf("Textura cargada correctamente\n");
 
 	entity1.texture = texture1;
 	zbuffer = new FloatImage(framebuffer.width, framebuffer.height);
-	zbuffer->Fill(10000000000000000000.0f);
+	zbuffer->Fill(1000000000.0f);
 
 	// Configurar la vista de la cámara y la perspectiva
-	// camera->Move(Vector3(0, 0, 25)); // Mover la cámara hacia atrás
 	camera->LookAt(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3::UP);
 	camera->SetPerspective(fov, aspect, near_plane, far_plane); // Iniciamos Perpsective por defecto
 
 	// Añadir las entidades a la lista
 	entities.push_back(entity1);
-	entities.push_back(entity2);
-	entities.push_back(entity3);
 }
 
 void Application::Render(void)
 {
-	if (cameraState == DRAW_SINGLE)
-	{
-		// Creamos un zbuffer para la pantalla
-		framebuffer.Fill(Color::BLACK);
-		zbuffer->Fill(10000000000000000000.0f);
-		entity1.Render(&framebuffer, camera, Color::WHITE, zbuffer);
-	}
-	// else if (cameraState == DRAW_MULTIPLE)
-	// {
-	// 	entity1.Render(&framebuffer, camera, Color::WHITE);
-	// 	entity2.Render(&framebuffer, camera, Color::RED);
-	// 	entity3.Render(&framebuffer, camera, Color::BLUE);
-	// }
+	framebuffer.Fill(Color::BLACK);
+
+	// Creamos un zbuffer para la pantalla	podemos borrar esot no??
+	zbuffer->Fill(1000000000.0f);
+	entity1.Render(&framebuffer, camera, Color::WHITE, zbuffer);
 
 	framebuffer.Render(); // Renderizamos el framebuffer
 }
 
 void Application::Update(float seconds_elapsed)
 {
-	/* Lab1
-	if (currentState == DRAWING_ANIMATION)
-	{
-		particleSystem.Update(seconds_elapsed);
-	}
-	*/
-
-	if (cameraState == DRAW_MULTIPLE)
-	{
-		entity1.modelMatrix.RotateLocal(seconds_elapsed * 10 * DEG2RAD, Vector3(0, 1, 0));
-
-		float current_scale = 1.0f; // Factor de escala inicial
-		float scale_speed = 0.01f;	// Velocidad de cambio de la escala
-		float min_scale = 0.5f;		// Escala mínima
-		float max_scale = 3.0f;		// Escala máxima
-
-		// Calculamos el cambio de escala basado en el tiempo
-		float scale_change = sin(time) * scale_speed;
-		current_scale += scale_change;
-
-		// Limitamos la escala entre los valores mínimo y máximo
-		current_scale = std::max(min_scale, std::min(max_scale, current_scale));
-
-		// Aplicar la escala a la entidad
-		entity2.modelMatrix.Scale(current_scale, current_scale, current_scale);
-
-		// Reducimos la velocidad
-		scale_speed *= 0.99f;
-
-		entity3.modelMatrix.Translate(0.01 * sin(time), 0, 0);
-	}
-
-	// Actualizar y dibujar las entidades dependiendo del estado actual
-	switch (cameraState)
-	{
-	case DRAW_SINGLE:
-		// Dibujar una sola entidad
-		// framebuffer.Fill(Color::BLACK);
-		// entities[0].Update(seconds_elapsed);
-		break;
-	case DRAW_MULTIPLE:
-		// Dibujar múltiples entidades
-		for (Entity &entity : entities)
-		{
-			framebuffer.Fill(Color::BLACK);
-			entity.Update(seconds_elapsed);
-		}
-		break;
-	}
 }
 
 // keyboard press event
@@ -251,24 +147,22 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 		propertyState = CAMERA_FAR; // Ajustar el far plane
 		break;
 	case SDLK_b:
-		/*Lab1: Relleno
-		isFilled = !isFilled; // Ponemos el valor contrario
-		*/
 		framebuffer.Fill(Color::BLACK);
 		break;
 
 	/*Lab 3 Keybindings*/
 	case SDLK_c:
-		// Cambiamos al valor contrario de plainColor
-		plainColor = !plainColor;
+		// Cambiamos al valor contrario entre interpolated color triangles y plain color
+		entity1.mode = (entity1.mode == eRenderMode::TRIANGLES_INTERPOLATED) ? eRenderMode::TRIANGLES : eRenderMode::TRIANGLES_INTERPOLATED;
 		break;
 	case SDLK_z:
 		// Cambiamos al valor contrario de occlusion
-		occlusion = !occlusion;
+		entity1.occlusion = !entity1.occlusion;
 		break;
 	case SDLK_t:
-		// Cambiamos al valor contrario de meshTexture
-		meshTexture = !meshTexture;
+
+		// Cambiamos entre el valor pointcloud y triangles
+		entity1.mode = (entity1.mode == eRenderMode::POINTCLOUD) ? eRenderMode::TRIANGLES : eRenderMode::POINTCLOUD;
 		break;
 	}
 }

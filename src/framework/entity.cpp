@@ -72,15 +72,24 @@ void Entity::Render(Image *framebuffer, Camera *camera, Color c, FloatImage *zBu
             continue;
         }
 
-        // TODO: 1. Pintar los triangulos con el color c
-
+        // Cojemos los UVs de la malla
         std::vector<Vector2> uvs = mesh.GetUVs();
+        // TODO: AQUI SE TIENEN QUE PONER LOS IFS
 
-        framebuffer->DrawTriangleInterpolated(triangleVertices[0], triangleVertices[1], triangleVertices[2], Color::RED, Color::GREEN, Color::BLUE, zBuffer, texture, uvs[i], uvs[i + 1], uvs[i + 2]);
+        occlusion ? zBuffer = nullptr : zBuffer = zBuffer;
+        mode == eRenderMode::POINTCLOUD ? texture = texture : texture = nullptr;
 
-        // framebuffer->DrawTriangle(Vector2(triangleVertices[0].x, triangleVertices[0].y), Vector2(triangleVertices[1].x, triangleVertices[1].y), Vector2(triangleVertices[2].x, triangleVertices[2].y), Color::WHITE, true, c);
+        // Cambiar entre mesh texture o el plain color
+        if (mode == eRenderMode::TRIANGLES)
+        {
+            framebuffer->DrawTriangle(Vector2(triangleVertices[0].x, triangleVertices[0].y), Vector2(triangleVertices[1].x, triangleVertices[1].y), Vector2(triangleVertices[2].x, triangleVertices[2].y), Color::BLUE, true, Color::BLUE);
+        }
+        else
+        {
+            framebuffer->DrawTriangleInterpolated(triangleVertices[0], triangleVertices[1], triangleVertices[2], Color::RED, Color::GREEN, Color::BLUE, zBuffer, texture, uvs[i], uvs[i + 1], uvs[i + 2]);
+        }
 
-        // Dibujar las líneas del triángulo
+        // Dibujar las líneas del triángulo (Labs anteriores)
         // framebuffer->DrawLineDDA(static_cast<int>(triangleVertices[0].x), static_cast<int>(triangleVertices[0].y), static_cast<int>(triangleVertices[1].x), static_cast<int>(triangleVertices[1].y), c);
         // framebuffer->DrawLineDDA(static_cast<int>(triangleVertices[1].x), static_cast<int>(triangleVertices[1].y), static_cast<int>(triangleVertices[2].x), static_cast<int>(triangleVertices[2].y), c);
         // framebuffer->DrawLineDDA(static_cast<int>(triangleVertices[2].x), static_cast<int>(triangleVertices[2].y), static_cast<int>(triangleVertices[0].x), static_cast<int>(triangleVertices[0].y), c);

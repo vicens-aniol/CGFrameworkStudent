@@ -515,14 +515,49 @@ void Image::DrawTriangleInterpolated(const Vector3 &p0, const Vector3 &p1, const
 				float w = 1 - u - v;
 
 				// Calculamos el color en función de la distancia al baricentro
-				// Color color = c0 * u + c1 * v + c2 * w;
-				Color color = Color::BLACK;
+				Color color = c0 * u + c1 * v + c2 * w;
+				// Color color = Color::BLACK;
 
 				// Calculamos la distancia al baricentro para poder interpolar la profundidad para el zdepth
 				float z = p0.z * u + p1.z * v + p2.z * w;
 
 				// Si se ha pasado un zbuffer, comprobamos si la posición actual es más cercana que la que ya hay en el zbuffer
-				if (zbuffer != nullptr && z < zbuffer->GetPixel(x, y))
+				if (zbuffer != nullptr)
+				{
+					if (z < zbuffer->GetPixel(x, y))
+					{
+						zbuffer->SetPixel(x, y, z);
+					}
+					else
+					{
+						continue;
+					}
+				}
+
+				if (texture == nullptr)
+				{
+					color = Color::BLUE;
+				}
+				else
+				{
+					// Interpolamos las coordenadas de UV en función de la distancia al baricentro
+					Vector2 uv = uv0 * u + uv1 * v + uv2 * w;
+
+					// Clameamos las coordenadas UV entre 0 y 1 para normalizarlas
+
+					uv.Clamp(0, 1);
+
+					// Adaptamos las coordenadas UV a las dimensiones de la textura
+					float texX = uv.x * (texture->width - 1);
+					float texY = uv.y * (texture->height - 1);
+
+					// Obtenemos el color del pixel de la textura en función de las coordenadas UV
+					color = texture->GetPixel(texX, texY);
+				}
+
+				SetPixelSafe(x, y, color);
+
+				/* if (zbuffer != nullptr && z < zbuffer->GetPixel(x, y))
 				{
 					if (texture == nullptr)
 					{
@@ -548,10 +583,10 @@ void Image::DrawTriangleInterpolated(const Vector3 &p0, const Vector3 &p1, const
 					zbuffer->SetPixel(x, y, z);
 					SetPixelSafe(x, y, color);
 				}
-				// else
-				// {
-				// 	SetPixelSafe(x, y, color);
-				// }
+				else if (zbuffer == nullptr)
+				{
+					SetPixelSafe(x, y, color);
+				} */
 			}
 		}
 	}

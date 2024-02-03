@@ -16,7 +16,8 @@ class Entity
     float time;
 
 public:
-    eRenderMode mode;
+    eRenderMode mode = eRenderMode::POINTCLOUD; // Valor inicial de tipo de renderizado a malla con textura
+    bool occlusion = false;                     // Valor inicial de occlusion a falso
 
     std::vector<Vector3> lastTriangleVertices; // Almacenar la última posición de los vértices
 

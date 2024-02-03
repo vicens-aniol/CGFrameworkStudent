@@ -141,11 +141,4 @@ public:
 	int last_mouse_x, last_mouse_y;
 
 	FloatImage *zbuffer;
-
-	// Lab3: Toogle para plainColor o interpolation
-	bool plainColor = true;
-	// Lab3: Toggle para occlusion
-	bool occlusion = false;
-	// Lab3: Toggle para mesh texture o plain color
-	bool meshTexture = false;
 };
