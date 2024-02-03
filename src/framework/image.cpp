@@ -530,23 +530,36 @@ void Image::DrawTriangleInterpolated(const Vector3 &p0, const Vector3 &p1, const
 					}
 					else
 					{
-						// Interpolamos las coordenadas de UV
+						// Interpolamos las coordenadas de UV en función de la distancia al baricentro
 						Vector2 uv = uv0 * u + uv1 * v + uv2 * w;
-                        int texX = uv.x * (texture->width - 1);
-						int texY = uv.y * (texture->height - 1);
+
+						// Clameamos las coordenadas UV entre 0 y 1 para normalizarlas
+
+						uv.Clamp(0, 1);
+
+						// Adaptamos las coordenadas UV a las dimensiones de la textura
+						float texX = uv.x * (texture->width - 1);
+						float texY = uv.y * (texture->height - 1);
+
+						// Obtenemos el color del pixel de la textura en función de las coordenadas UV
 						color = texture->GetPixel(texX, texY);
 					}
 
 					zbuffer->SetPixel(x, y, z);
 					SetPixelSafe(x, y, color);
 				}
-				else
-				{
-					SetPixelSafe(x, y, color);
-				}
+				// else
+				// {
+				// 	SetPixelSafe(x, y, color);
+				// }
 			}
 		}
 	}
+
+	// Dibujamos el borde del triángulo, utilizando lineas
+	// DrawLineDDA(p0.x, p0.y, p1.x, p1.y, Color::BLACK);
+	// DrawLineDDA(p1.x, p1.y, p2.x, p2.y, Color::BLACK);
+	// DrawLineDDA(p2.x, p2.y, p0.x, p0.y, Color::BLACK);
 }
 
 void Image::DrawImage(const Image &image, int x, int y, bool top)

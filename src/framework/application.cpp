@@ -91,12 +91,12 @@ void Application::Init(void)
 	!texture1->LoadTGA("textures/lee_color_specular.tga", true) ? printf("No se ha podido cargar la textura") : printf("Textura cargada correctamente");
 
 	entity1.texture = texture1;
-	// zbuffer = new FloatImage(framebuffer.width, framebuffer.height);
-	// zbuffer->Fill(10000000000000000000.0f);
+	zbuffer = new FloatImage(framebuffer.width, framebuffer.height);
+	zbuffer->Fill(10000000000000000000.0f);
 
 	// Configurar la vista de la cámara y la perspectiva
 	// camera->Move(Vector3(0, 0, 25)); // Mover la cámara hacia atrás
-	camera->LookAt(Vector3(0, 0, 2), Vector3(0, 0, 0), Vector3::UP);
+	camera->LookAt(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3::UP);
 	camera->SetPerspective(fov, aspect, near_plane, far_plane); // Iniciamos Perpsective por defecto
 
 	// Añadir las entidades a la lista
@@ -110,8 +110,8 @@ void Application::Render(void)
 	if (cameraState == DRAW_SINGLE)
 	{
 		// Creamos un zbuffer para la pantalla
-		// zbuffer->Fill(10000000000000000000.0f);
 		framebuffer.Fill(Color::BLACK);
+		zbuffer->Fill(10000000000000000000.0f);
 		entity1.Render(&framebuffer, camera, Color::WHITE, zbuffer);
 	}
 	// else if (cameraState == DRAW_MULTIPLE)
