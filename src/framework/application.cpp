@@ -112,13 +112,14 @@ void Application::Render(void)
 		zbuffer->Fill(100000.0f);
 
 		entity1.Render(&framebuffer, camera, Color::WHITE, zbuffer);
+		
 	}
-	else if (cameraState == DRAW_MULTIPLE)
-	{
-		entity1.Render(&framebuffer, camera, Color::WHITE);
-		entity2.Render(&framebuffer, camera, Color::RED);
-		entity3.Render(&framebuffer, camera, Color::BLUE);
-	}
+	// else if (cameraState == DRAW_MULTIPLE)
+	// {
+	// 	entity1.Render(&framebuffer, camera, Color::WHITE);
+	// 	entity2.Render(&framebuffer, camera, Color::RED);
+	// 	entity3.Render(&framebuffer, camera, Color::BLUE);
+	// }
 
 	framebuffer.Render(); // Renderizamos el framebuffer
 }

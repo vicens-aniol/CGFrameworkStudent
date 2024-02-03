@@ -526,13 +526,15 @@ void Image::DrawTriangleInterpolated(const Vector3 &p0, const Vector3 &p1, const
 				{
 					if (texture == nullptr)
 					{
-						// color = c0 * u + c1 * v + c2 * w;
+						color = c0 * u + c1 * v + c2 * w;
 					}
 					else
 					{
 						// Interpolamos las coordenadas de UV
 						Vector2 uv = uv0 * u + uv1 * v + uv2 * w;
-						color = texture->GetPixel(uv.x, uv.y);
+                        int texX = uv.x * (texture->width - 1);
+						int texY = uv.y * (texture->height - 1);
+						color = texture->GetPixel(texX, texY);
 					}
 
 					zbuffer->SetPixel(x, y, z);

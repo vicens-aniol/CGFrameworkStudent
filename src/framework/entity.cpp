@@ -89,7 +89,6 @@ void Entity::Render(Image *framebuffer, Camera *camera, Color c, FloatImage *zBu
 
 void Entity::Update(float seconds_elapsed)
 {
-
     Vector3 axis(0, 1, 0); // Eje Y
     modelMatrix.Rotate(5.0 * DEG2RAD, axis);
 }
