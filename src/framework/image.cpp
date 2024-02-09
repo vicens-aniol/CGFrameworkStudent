@@ -509,10 +509,16 @@ void Image::DrawTriangleInterpolated(const sTriangleInfo &triangle, FloatImage *
 
 				// Clampeamos las coordenadas baricentro entre 0 y 1
 				bCoords.Clamp(0, 1);
-
-				float u = bCoords.x;
-				float v = bCoords.y;
-				float w = 1 - u - v;
+                
+                float bx = bCoords.x;
+                float by = bCoords.y;
+                float bz = bCoords.z;
+                
+                float u = bx/(bx+by+bz);
+                float v = by/(bx+by+bz);
+                float w = 1 - u - v;
+                
+                //printf("%f", u+v+w);
 
 				// Calculamos el color en función de la distancia al baricentro
 				Color color = Color::BLACK;
