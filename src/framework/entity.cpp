@@ -32,10 +32,15 @@ void Entity::setMesh(const Mesh &mesh)
     this->mesh = mesh;
 }
 
-void Entity::Render(Image *framebuffer, Camera *camera, const Color &c)
+void Entity::Render(Image *framebuffer, Camera *camera, Color c, FloatImage *zBuffer)
 {
+
     // Obtener los vértices de la malla
     const std::vector<Vector3> &vertices = mesh.GetVertices();
+
+    // Crear un puntero condicional para el zBuffer y la textura, para que puedan ser nulos en caso de activarlo con los keybindings
+    FloatImage *conditionalZBuffer = occlusion ? nullptr : zBuffer;
+    Image *conditionalTexture = (mode == eRenderMode::POINTCLOUD) ? texture : nullptr;
 
     // Iterar a través de todos los triángulos en la malla
     for (int i = 0; i < vertices.size(); i += 3)
@@ -70,16 +75,33 @@ void Entity::Render(Image *framebuffer, Camera *camera, const Color &c)
         {
             continue;
         }
-        // Dibujar las líneas del triángulo
-        framebuffer->DrawLineDDA(static_cast<int>(triangleVertices[0].x), static_cast<int>(triangleVertices[0].y), static_cast<int>(triangleVertices[1].x), static_cast<int>(triangleVertices[1].y), c);
-        framebuffer->DrawLineDDA(static_cast<int>(triangleVertices[1].x), static_cast<int>(triangleVertices[1].y), static_cast<int>(triangleVertices[2].x), static_cast<int>(triangleVertices[2].y), c);
-        framebuffer->DrawLineDDA(static_cast<int>(triangleVertices[2].x), static_cast<int>(triangleVertices[2].y), static_cast<int>(triangleVertices[0].x), static_cast<int>(triangleVertices[0].y), c);
+
+        // Cojemos los UVs de la malla
+        std::vector<Vector2> uvs = mesh.GetUVs();
+
+        // Cambiar entre mesh texture o el plain color
+        if (mode == eRenderMode::TRIANGLES)
+        {
+            framebuffer->DrawTriangle(Vector2(triangleVertices[0].x, triangleVertices[0].y), Vector2(triangleVertices[1].x, triangleVertices[1].y), Vector2(triangleVertices[2].x, triangleVertices[2].y), Color::BLUE, true, Color::BLUE);
+        }
+        else
+        {
+            // Creación de la struct con toda la información del triangulo
+
+            Image::sTriangleInfo triangle(triangleVertices[0], triangleVertices[1], triangleVertices[2], Color::RED, Color::GREEN, Color::BLUE, conditionalTexture, uvs[i], uvs[i + 1], uvs[i + 2]);
+
+            framebuffer->DrawTriangleInterpolated(triangle, conditionalZBuffer);
+        }
+
+        // Dibujar las líneas del triángulo (Labs anteriores)
+        // framebuffer->DrawLineDDA(static_cast<int>(triangleVertices[0].x), static_cast<int>(triangleVertices[0].y), static_cast<int>(triangleVertices[1].x), static_cast<int>(triangleVertices[1].y), c);
+        // framebuffer->DrawLineDDA(static_cast<int>(triangleVertices[1].x), static_cast<int>(triangleVertices[1].y), static_cast<int>(triangleVertices[2].x), static_cast<int>(triangleVertices[2].y), c);
+        // framebuffer->DrawLineDDA(static_cast<int>(triangleVertices[2].x), static_cast<int>(triangleVertices[2].y), static_cast<int>(triangleVertices[0].x), static_cast<int>(triangleVertices[0].y), c);
     }
 }
 
 void Entity::Update(float seconds_elapsed)
 {
-
     Vector3 axis(0, 1, 0); // Eje Y
     modelMatrix.Rotate(5.0 * DEG2RAD, axis);
 }

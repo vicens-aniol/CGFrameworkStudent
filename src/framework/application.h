@@ -139,4 +139,6 @@ public:
 
 	// Variables para rastrear la posición previa del ratón
 	int last_mouse_x, last_mouse_y;
+
+	FloatImage *zbuffer;
 };

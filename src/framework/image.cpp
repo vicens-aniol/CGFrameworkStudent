@@ -460,7 +460,7 @@ void Image::DrawTriangle(const Vector2 &p0, const Vector2 &p1, const Vector2 &p2
 			{
 				for (int x = table[y].minx; x <= table[y].maxx; x++)
 				{
-					SetPixel(x, y, fillColor);
+					SetPixelSafe(x, y, fillColor);
 				}
 			}
 		}
@@ -470,6 +470,137 @@ void Image::DrawTriangle(const Vector2 &p0, const Vector2 &p1, const Vector2 &p2
 	DrawLineDDA(p0.x, p0.y, p1.x, p1.y, borderColor);
 	DrawLineDDA(p1.x, p1.y, p2.x, p2.y, borderColor);
 	DrawLineDDA(p2.x, p2.y, p0.x, p0.y, borderColor);
+}
+
+void Image::DrawTriangleInterpolated(const sTriangleInfo &triangle, FloatImage *zbuffer)
+{
+
+	// TODO: 2. Implementación de Triangle Interpolated and 3.add zbuffer and 4.textures
+	std::vector<Cell> table(height);
+
+	ScanLineDDA(triangle.vertices[0].x, triangle.vertices[0].y, triangle.vertices[1].x, triangle.vertices[1].y, table);
+	ScanLineDDA(triangle.vertices[1].x, triangle.vertices[1].y, triangle.vertices[2].x, triangle.vertices[2].y, table);
+	ScanLineDDA(triangle.vertices[2].x, triangle.vertices[2].y, triangle.vertices[0].x, triangle.vertices[0].y, table);
+
+	// Creamos la matriz de baricentro
+	Matrix44 m;
+	m.M[0][0] = triangle.vertices[0].x;
+	m.M[0][1] = triangle.vertices[0].y;
+	m.M[0][2] = 1;
+	m.M[1][0] = triangle.vertices[1].x;
+	m.M[1][1] = triangle.vertices[1].y;
+	m.M[1][2] = 1;
+	m.M[2][0] = triangle.vertices[2].x;
+	m.M[2][1] = triangle.vertices[2].y;
+	m.M[2][2] = 1;
+
+	// Hacemos la inversa de la matriz
+	m.Inverse();
+
+	// Llenamos el triángulo, utilizando el algoritmo AET (Active Edge Table), con el color en funcion de la distancia al baricentro
+	for (int y = 0; y < table.size(); y++)
+	{
+		if (table[y].minx <= table[y].maxx)
+		{
+			for (int x = table[y].minx; x <= table[y].maxx; x++)
+			{
+				// Calculamos la baricentro de la posición actual
+				Vector3 bCoords = m * Vector3(x, y, 1);
+
+				// Clampeamos las coordenadas baricentro entre 0 y 1
+				bCoords.Clamp(0, 1);
+                
+                float bx = bCoords.x;
+                float by = bCoords.y;
+                float bz = bCoords.z;
+                
+                float u = bx/(bx+by+bz);
+                float v = by/(bx+by+bz);
+                float w = 1 - u - v;
+                
+                //printf("%f", u+v+w);
+
+				// Calculamos el color en función de la distancia al baricentro
+				Color color = Color::BLACK;
+				// Color color = Color::BLACK;
+
+				// Calculamos la distancia al baricentro para poder interpolar la profundidad para el zdepth
+				float z = triangle.vertices[0].z * u + triangle.vertices[1].z * v + triangle.vertices[2].z * w;
+
+				// Si se ha pasado un zbuffer, comprobamos si la posición actual es más cercana que la que ya hay en el zbuffer
+				if (zbuffer != nullptr)
+				{
+					if (z < zbuffer->GetPixel(x, y))
+					{
+						zbuffer->SetPixel(x, y, z);
+					}
+					else
+					{
+						continue;
+					}
+				}
+
+				if (triangle.texture == nullptr)
+				{
+					color = triangle.colors[0] * u + triangle.colors[1] * v + triangle.colors[2] * w;
+				}
+				else
+				{
+					// Interpolamos las coordenadas de UV en función de la distancia al baricentro
+					Vector2 uv = triangle.uvs[0] * u + triangle.uvs[1] * v + triangle.uvs[2] * w;
+
+					// Clameamos las coordenadas UV entre 0 y 1 para normalizarlas
+
+					uv.Clamp(0, 1);
+
+					// Adaptamos las coordenadas UV a las dimensiones de la textura
+					float texX = uv.x * (triangle.texture->width - 1);
+					float texY = uv.y * (triangle.texture->height - 1);
+
+					// Obtenemos el color del pixel de la textura en función de las coordenadas UV
+					color = triangle.texture->GetPixel(texX, texY);
+				}
+
+				SetPixelSafe(x, y, color);
+
+				/* if (zbuffer != nullptr && z < zbuffer->GetPixel(x, y))
+				{
+					if (texture == nullptr)
+					{
+						color = c0 * u + c1 * v + c2 * w;
+					}
+					else
+					{
+						// Interpolamos las coordenadas de UV en función de la distancia al baricentro
+						Vector2 uv = uv0 * u + uv1 * v + uv2 * w;
+
+						// Clameamos las coordenadas UV entre 0 y 1 para normalizarlas
+
+						uv.Clamp(0, 1);
+
+						// Adaptamos las coordenadas UV a las dimensiones de la textura
+						float texX = uv.x * (texture->width - 1);
+						float texY = uv.y * (texture->height - 1);
+
+						// Obtenemos el color del pixel de la textura en función de las coordenadas UV
+						color = texture->GetPixel(texX, texY);
+					}
+
+					zbuffer->SetPixel(x, y, z);
+					SetPixelSafe(x, y, color);
+				}
+				else if (zbuffer == nullptr)
+				{
+					SetPixelSafe(x, y, color);
+				} */
+			}
+		}
+	}
+
+	// Dibujamos el borde del triángulo, utilizando lineas
+	// DrawLineDDA(p0.x, p0.y, p1.x, p1.y, Color::BLACK);
+	// DrawLineDDA(p1.x, p1.y, p2.x, p2.y, Color::BLACK);
+	// DrawLineDDA(p2.x, p2.y, p0.x, p0.y, Color::BLACK);
 }
 
 void Image::DrawImage(const Image &image, int x, int y, bool top)
