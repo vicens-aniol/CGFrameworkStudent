@@ -236,6 +236,37 @@ void Matrix44::SetRotation( float angle_in_rad, const Vector3& axis  )
 	M[3][3] = 1.0f;
 }
 
+void Matrix44::SetScale(float x, float y, float z)
+{
+	Matrix44 S;
+	S.SetIdentity();
+	S.m[0] = x;
+	S.m[5] = y;
+	S.m[10] = z;
+	*this = *this * S;
+}
+
+void Matrix44::ScaleLocal(float x, float y, float z)
+{
+	Matrix44 S;
+	S.SetIdentity();
+	S.m[0] = 1.0f / x;
+	S.m[5] = 1.0f / y;
+	S.m[10] = 1.0f / z;
+	*this = *this * S;
+}
+
+void Matrix44::Scale(float x, float y, float z)
+{
+	Matrix44 S;
+	S.SetIdentity();
+	S.m[0] = 1.0f / x;
+	S.m[5] = 1.0f / y;
+	S.m[10] = 1.0f / z;
+	*this = S * *this;
+}
+
+
 Matrix44 Matrix44::GetRotationOnly()
 {
 	Matrix44 trans = *this;

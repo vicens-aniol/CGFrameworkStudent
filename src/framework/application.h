@@ -9,6 +9,8 @@
 #include "image.h"
 #include "button.h"
 #include "particle-system.h"
+#include "entity.h"
+#include "camera.h"
 
 // Necesitamos un estado para saber si estamos dibujando o no y el que
 enum DrawingState
@@ -19,7 +21,20 @@ enum DrawingState
 	DRAWING_RECTANGLE,
 	DRAWING_CIRCLE,
 	DRAWING_TRIANGLE,
-	DRAWING_ANIMATION
+	DRAWING_ANIMATION,
+};
+
+enum CameraState
+{
+	DRAW_SINGLE,
+	DRAW_MULTIPLE
+};
+
+enum PropertyState
+{
+	CAMERA_NEAR,
+	CAMERA_FAR,
+	CAMERA_NONE
 };
 
 // Constantes para el tamaño del borde
@@ -53,8 +68,14 @@ public:
 	// CPU Global framebuffer
 	Image framebuffer;
 
-	//
+	// Declarar y crear un sistema de particulas
 	ParticleSystem particleSystem;
+
+	// Declarar y crear una entidad
+	Entity entity1, entity2, entity3;
+
+	// Declarar y crear una cámara
+	Camera *camera;
 
 	// Constructor and main methods
 	Application(const char *caption, int width, int height);
@@ -94,6 +115,9 @@ public:
 	// Vector para almacenar los puntos de los dibujos (temporal)
 	std::vector<Vector2> puntos;
 
+	// Lista de entidades para almacenar los dibujos
+	std::vector<Entity> entities;
+
 	void DrawCirclesDDA(Vector2 start, Vector2 end, int radius, const Color &color);
 	// Última posición del ratón para pintar y que no se vea el trazo
 	Vector2 lastMousePosition = {-1, -1};
@@ -102,4 +126,19 @@ public:
 
 	// Buffer temporal para almacenar la imagen antes de dibujarla en el framebuffer, si se tiene que restaurar o cargar mientras se está previsualizando alguna cosa.
 	Image tempbuffer;
+
+	// Estado de la camara
+	CameraState cameraState;
+	PropertyState propertyState = CAMERA_NONE;
+
+	// Configuración de la cámara
+	float fov = 45.0f;							 // Campo de visión
+	float aspect = window_width / window_height; // Relación de aspecto
+	float near_plane = 0.01;					 // Plano cercano
+	float far_plane = 100.0;					 // Plano lejano
+
+	// Variables para rastrear la posición previa del ratón
+	int last_mouse_x, last_mouse_y;
+
+	FloatImage *zbuffer;
 };
