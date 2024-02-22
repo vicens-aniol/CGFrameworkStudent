@@ -77,6 +77,11 @@ void Application::Render(void)
 	// framebuffer.Render(); // Renderizamos el framebuffer
 
 	shader->Enable();
+	shader->SetFloat("u_time", time);
+	shader->SetVector2("u_resolution", Vector2(window_width, window_height));
+	shader->SetUniform1("u_subtask", subtask);
+	printf("Subtask: %f\n", subtask);
+	printf("Current Task: %d\n", currentTask);
     mesh->Render();
     shader->Disable();
 }
@@ -130,12 +135,7 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 		}
 		camera->UpdateProjectionMatrix();
 		break;
-	case SDLK_1:
-		cameraState = DRAW_SINGLE; // Cambia a dibujar una sola entidad
-		break;
-	case SDLK_2:
-		cameraState = DRAW_MULTIPLE; // Cambia a dibujar entidades animadas
-		break;
+
 	case SDLK_o:
 	{
 		camera->type = Camera::ORTHOGRAPHIC;
@@ -148,33 +148,54 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 		break;
 	}
 	case SDLK_p:
+	{
 		camera->type = Camera::PERSPECTIVE;
 		propertyState = CAMERA_NONE;
 		camera->SetPerspective(camera->fov, static_cast<float>(window_width) / static_cast<float>(window_height), camera->near_plane, camera->far_plane);
 		camera->UpdateProjectionMatrix();
 		break;
-	case SDLK_n:
-		propertyState = CAMERA_NEAR; // Ajustar el near plane
+	}
+	case SDLK_1:
+        currentTask = 1;
+        break;
+	case SDLK_2:
+		currentTask = 2;
 		break;
-	case SDLK_f:
-		propertyState = CAMERA_FAR; // Ajustar el far plane
+	case SDLK_3:
+		currentTask = 3;
+		break;
+	case SDLK_4:
+		currentTask = 4;
+		break;
+	case SDLK_a:
+		if (currentTask >= 1 && currentTask <= 4) {
+			subtask = 1;
+		}
 		break;
 	case SDLK_b:
-		framebuffer.Fill(Color::BLACK);
+		if (currentTask >= 1 && currentTask <= 4) {
+			subtask = 2;
+		}
 		break;
-
-	/*Lab 3 Keybindings*/
 	case SDLK_c:
-		// Cambiamos al valor contrario entre interpolated color triangles y plain color
-		entity1.mode = (entity1.mode == eRenderMode::TRIANGLES_INTERPOLATED) ? eRenderMode::TRIANGLES : eRenderMode::TRIANGLES_INTERPOLATED;
+		if (currentTask >= 1 && currentTask <= 3) {
+			subtask = 3;
+		}
 		break;
-	case SDLK_z:
-		// Cambiamos al valor contrario de occlusion
-		entity1.occlusion = !entity1.occlusion;
+	case SDLK_d:
+		if (currentTask >= 1 && currentTask <= 3) {
+			subtask = 4;
+		}
+		break;	
+	case SDLK_e:
+		if (currentTask >= 1 && currentTask <= 3) {
+			subtask = 5;
+		}
 		break;
-	case SDLK_t:
-		// Cambiamos entre el valor pointcloud y triangles
-		entity1.mode = (entity1.mode == eRenderMode::POINTCLOUD) ? eRenderMode::TRIANGLES : eRenderMode::POINTCLOUD;
+	case SDLK_f:
+		if (currentTask >= 1 && currentTask <= 3) {
+			subtask = 6;
+		}
 		break;
 	}
 }

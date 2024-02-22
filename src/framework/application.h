@@ -147,4 +147,8 @@ public:
 	int last_mouse_x, last_mouse_y;
 
 	FloatImage *zbuffer;
+
+	// Establecemos la tarea actual
+	int currentTask = 1;
+	int subtask = 1;	
 };
