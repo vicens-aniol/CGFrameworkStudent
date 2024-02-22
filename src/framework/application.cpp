@@ -1,6 +1,5 @@
 #include "application.h"
 #include "mesh.h"
-#include "shader.h"
 #include "utils.h"
 
 Application::Application(const char *caption, int width, int height)
@@ -28,46 +27,60 @@ void Application::Init(void)
 {
 	std::cout << "Initiating app..." << std::endl;
 
-	framebuffer.Fill(Color::BLACK);
 
-	// Cargar las 3 mallas
-	Mesh *mesh_lee = new Mesh();
-	mesh_lee->LoadOBJ("meshes/cleo.obj");
+	// Crear un cuadrado
+    mesh = new Mesh();
+    mesh->CreateQuad(); // Asegúrate de tener este método en tu clase Mesh
 
-	// Asignar la malla a las entidades
-	entity1.mesh = *mesh_lee;
+    // Cargar el shader
+	shader = Shader::Get("shaders/quad.vs", "shaders/quad.fs");
+	
+	// // Cargar las 3 mallas
+	// Mesh *mesh_lee = new Mesh();
+	// mesh_lee->LoadOBJ("meshes/cleo.obj");
 
-	// Establecer las matrices de modelo para posicionar las entidades
-	entity1.modelMatrix.SetTranslation(0, -0.25, 0); // Posiciona entity1
+	// // Asignar la malla a las entidades
+	// entity1.mesh = *mesh_lee;
 
+	// // Establecer las matrices de modelo para posicionar las entidades
+	// entity1.modelMatrix.SetTranslation(0, -0.25, 0); // Posiciona entity1
+
+	
 	camera = new Camera();
 
-	Image *texture1 = new Image();
+	// Image *texture1 = new Image();
 
-	!texture1->LoadTGA("textures/cleo_color_specular.tga", true) ? printf("No se ha podido cargar la textura\n") : printf("Textura cargada correctamente\n");
+	// !texture1->LoadTGA("textures/cleo_color_specular.tga", true) ? printf("No se ha podido cargar la textura\n") : printf("Textura cargada correctamente\n");
 
-	entity1.texture = texture1;
-	zbuffer = new FloatImage(framebuffer.width, framebuffer.height);
-	zbuffer->Fill(1000000000.0f);
+	// entity1.texture = texture1;
+	// zbuffer = new FloatImage(framebuffer.width, framebuffer.height);
+	// zbuffer->Fill(1000000000.0f);
 
 	// Configurar la vista de la cámara y la perspectiva
 	camera->LookAt(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3::UP);
 	camera->SetPerspective(fov, aspect, near_plane, far_plane); // Iniciamos Perpsective por defecto
 
-	// Añadir las entidades a la lista
-	entities.push_back(entity1);
+	// // Añadir las entidades a la lista
+	// entities.push_back(entity1);
+	
+	
 }
 
 void Application::Render(void)
 {
-	framebuffer.Fill(Color::BLACK);
+	//framebuffer.Fill(Color::BLACK);
 
-	// Creamos un zbuffer para la pantalla	podemos borrar esot no??
-	zbuffer->Fill(1000000000.0f);
-	entity1.Render(&framebuffer, camera, Color::WHITE, zbuffer);
+	// // Creamos un zbuffer para la pantalla	podemos borrar esot no??
+	// zbuffer->Fill(1000000000.0f);
+	// entity1.Render(&framebuffer, camera, Color::WHITE, zbuffer);
 
-	framebuffer.Render(); // Renderizamos el framebuffer
+	// framebuffer.Render(); // Renderizamos el framebuffer
+
+	shader->Enable();
+    mesh->Render();
+    shader->Disable();
 }
+
 
 void Application::Update(float seconds_elapsed)
 {

@@ -11,6 +11,7 @@
 #include "particle-system.h"
 #include "entity.h"
 #include "camera.h"
+#include "shader.h"
 
 // Necesitamos un estado para saber si estamos dibujando o no y el que
 enum DrawingState
@@ -77,6 +78,11 @@ public:
 	// Declarar y crear una cámara
 	Camera *camera;
 
+	// Declaramaos y creamos una mesh y un shader
+	Mesh *mesh;
+	Shader* shader;
+	
+	//Shader::Get("/res/shaders/quad.vs", "/res/shaders/quad.fs");
 	// Constructor and main methods
 	Application(const char *caption, int width, int height);
 	~Application();
