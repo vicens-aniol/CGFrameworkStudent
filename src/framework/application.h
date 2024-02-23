@@ -151,4 +151,6 @@ public:
 	// Establecemos la tarea actual
 	int currentTask = 1;
 	int subtask = 1;	
+
+	Texture *texture;
 };

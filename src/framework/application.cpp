@@ -35,7 +35,9 @@ void Application::Init(void)
     // Cargar el shader
 	shader = Shader::Get("shaders/quad.vs", "shaders/quad.fs");
 	
-	// // Cargar las 3 mallas
+	// Crear una textura
+	texture = Texture::Get("images/fruits.png");
+
 	// Mesh *mesh_lee = new Mesh();
 	// mesh_lee->LoadOBJ("meshes/cleo.obj");
 
@@ -79,7 +81,9 @@ void Application::Render(void)
 	shader->Enable();
 	shader->SetFloat("u_time", time);
 	shader->SetVector2("u_resolution", Vector2(window_width, window_height));
+	shader->SetUniform1("u_currentTask", currentTask);
 	shader->SetUniform1("u_subtask", subtask);
+	shader->SetTexture("u_texture", texture);
 	printf("Subtask: %f\n", subtask);
 	printf("Current Task: %d\n", currentTask);
     mesh->Render();
