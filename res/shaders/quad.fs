@@ -16,13 +16,19 @@ void main()
 		gl_FragColor = vec4(color, 1.0);
 	}
 
-	//TODO: QUE SIEMPRE ESTE CENTRADO EL CIRCULO, QUE NO SE CONVIERTA EN UNA ELIPSE AL CAMBIAR EL TAMAÑO DE LA PANTALLA, PERO QUE ESTE CENTRADO EN EL CENTRO DE LA PANTALLA
 	// SUBTASCA B DEL EJERCICIO 1
 	else if (u_subtask == 2)
 	{
-		float distance = distance(v_uv, vec2(0.5, 0.5));
-		vec3 subTaskB = mix(vec3(0.0), vec3(1.0), distance);
-		gl_FragColor = vec4(subTaskB, 1.0);
+		// Calcular la distancia desde el centro de la pantalla
+		vec2 center = vec2(0.5, 0.5);
+		vec2 normalizedUV = (v_uv - center) * u_resolution / u_resolution.y; // Ajustar las coordenadas UV según la relación de aspecto y centrar el círculo
+		float distance = distance(normalizedUV, vec2(0.0));
+
+		// Calcular el color del círculo
+		vec3 color = mix(vec3(0.0), vec3(1.0), distance);
+
+		// Salida del color final
+		gl_FragColor = vec4(color, 1.0);
 	}
 
 	// SUBTASCA C DEL EJERCICIO 1
@@ -107,5 +113,56 @@ void main()
 	} else if (u_currentTask == 2) {
 		vec4 texture_color = texture2D(u_texture, v_uv);
 		gl_FragColor = texture_color;
+		if (u_subtask == 1) {
+			// SUBTASCA A DEL EJERCICIO 2
+			vec3 grayscale_color = vec3(dot(texture_color.rgb, vec3(0.299, 0.587, 0.114)));
+			gl_FragColor = vec4(grayscale_color, texture_color.a);
+
+		}
+		else if (u_subtask == 2) {
+			// SUBTASCA B DEL EJERCICIO 2
+			vec3 sepia_color = vec3(texture_color.r * 0.393 + texture_color.g * 0.769 + texture_color.b * 0.189);
+			gl_FragColor = vec4(sepia_color, texture_color.a);
+		}
+		//FIXME: Arreglar el tono amarillo
+		else if (u_subtask == 3) {
+			// SUBTASCA C DEL EJERCICIO 2
+			vec3 grayscale_color = vec3(dot(texture_color.rgb, vec3(0.299, 0.587, 0.114)));
+			vec3 yellow_tint = vec3(1.0, 1.0, 0.0);
+			float tint_factor = 0.5; 
+			vec3 final_color = mix(grayscale_color, yellow_tint * grayscale_color, tint_factor);
+			gl_FragColor = vec4(final_color, texture_color.a);
+		}
+		else if (u_subtask == 4) {
+			// SUBTASCA D DEL EJERCICIO 2
+			vec3 color = texture_color.rgb;
+			float gray = dot(color, vec3(0.299, 0.587, 0.114));
+			float threshold = 0.5;
+			vec3 blackAndWhite = vec3(step(threshold, gray));
+			gl_FragColor = vec4(blackAndWhite, texture_color.a);
+		}
+		// else if (u_subtask == 5) {
+		// 	// SUBTASCA E DEL EJERCICIO 2
+		// 	// Aplicar efecto difuminado en los bordes
+		// 	float blur_radius = 0.1;
+		// 	float blur_factor = smoothstep(0.0, blur_radius, v_uv.x) * smoothstep(1.0 - blur_radius, 1.0, v_uv.x) * smoothstep(0.0, blur_radius, v_uv.y) * smoothstep(1.0 - blur_radius, 1.0, v_uv.y);
+		// 	vec4 blurred_color = mix(negative_color, vec3(1.0), blur_factor);
+			
+		// 	// Aclarar el centro
+		// 	float center_radius = 0.3;
+		// 	float center_factor = smoothstep(0.5 - center_radius, 0.5 + center_radius, v_uv.x) * smoothstep(0.5 - center_radius, 0.5 + center_radius, v_uv.y);
+		// 	vec4 final_color = mix(blurred_color, vec3(1.0), center_factor);
+			
+		// 	gl_FragColor = vec4(final_color, texture_color.a);
+		// }
+		// else if (u_subtask == 6 ){
+		// // SUBTASCA F DEL EJERCICIO 1
+		// // Aplicar efecto de desenfoque a la textura
+		// float blur_radius = 0.1;
+		// float blur_factor = smoothstep(0.0, blur_radius, v_uv.x) * smoothstep(1.0 - blur_radius, 1.0, v_uv.x) * smoothstep(0.0, blur_radius, v_uv.y) * smoothstep(1.0 - blur_radius, 1.0, v_uv.y);
+		// vec4 blurred_color = texture2D(u_texture, v_uv) * blur_factor;
+		
+		// gl_FragColor = blurred_color;
+		// }
 	}
 }
