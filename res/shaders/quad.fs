@@ -117,21 +117,15 @@ void main()
 			// SUBTASCA A DEL EJERCICIO 2
 			vec3 grayscale_color = vec3(dot(texture_color.rgb, vec3(0.299, 0.587, 0.114)));
 			gl_FragColor = vec4(grayscale_color, texture_color.a);
-
 		}
 		else if (u_subtask == 2) {
 			// SUBTASCA B DEL EJERCICIO 2
-			vec3 sepia_color = vec3(texture_color.r * 0.393 + texture_color.g * 0.769 + texture_color.b * 0.189);
-			gl_FragColor = vec4(sepia_color, texture_color.a);
+			vec3 negative_color = vec3(1.0 - texture_color.r, 1.0 - texture_color.g, 1.0 - texture_color.b);
+			gl_FragColor = vec4(negative_color, texture_color.a);
 		}
-		//FIXME: Arreglar el tono amarillo
 		else if (u_subtask == 3) {
 			// SUBTASCA C DEL EJERCICIO 2
-			vec3 grayscale_color = vec3(dot(texture_color.rgb, vec3(0.299, 0.587, 0.114)));
-			vec3 yellow_tint = vec3(1.0, 1.0, 0.0);
-			float tint_factor = 0.5; 
-			vec3 final_color = mix(grayscale_color, yellow_tint * grayscale_color, tint_factor);
-			gl_FragColor = vec4(final_color, texture_color.a);
+			
 		}
 		else if (u_subtask == 4) {
 			// SUBTASCA D DEL EJERCICIO 2
@@ -141,28 +135,24 @@ void main()
 			vec3 blackAndWhite = vec3(step(threshold, gray));
 			gl_FragColor = vec4(blackAndWhite, texture_color.a);
 		}
-		// else if (u_subtask == 5) {
-		// 	// SUBTASCA E DEL EJERCICIO 2
-		// 	// Aplicar efecto difuminado en los bordes
-		// 	float blur_radius = 0.1;
-		// 	float blur_factor = smoothstep(0.0, blur_radius, v_uv.x) * smoothstep(1.0 - blur_radius, 1.0, v_uv.x) * smoothstep(0.0, blur_radius, v_uv.y) * smoothstep(1.0 - blur_radius, 1.0, v_uv.y);
-		// 	vec4 blurred_color = mix(negative_color, vec3(1.0), blur_factor);
+		else if (u_subtask == 5) {
+			// SUBTASCA E DEL EJERCICIO 2
+			// Calcular la distancia desde el centro de la textura
+			vec2 center = vec2(0.5, 0.5);
+			float distance = length(v_uv - center);
+
+			// Calcular el factor de oscurecimiento basado en la distancia
+			float darknessFactor = 1.0 - distance;
+
+			// Aplicar el factor de oscurecimiento al color de la textura
+			vec3 color = texture_color.rgb * darknessFactor;
+
+			// Salida del color final
+			gl_FragColor = vec4(color, texture_color.a);
+		}
+		else if (u_subtask == 6) {
+			// SUBTASCA F DEL EJERCICIO 2
 			
-		// 	// Aclarar el centro
-		// 	float center_radius = 0.3;
-		// 	float center_factor = smoothstep(0.5 - center_radius, 0.5 + center_radius, v_uv.x) * smoothstep(0.5 - center_radius, 0.5 + center_radius, v_uv.y);
-		// 	vec4 final_color = mix(blurred_color, vec3(1.0), center_factor);
-			
-		// 	gl_FragColor = vec4(final_color, texture_color.a);
-		// }
-		// else if (u_subtask == 6 ){
-		// // SUBTASCA F DEL EJERCICIO 1
-		// // Aplicar efecto de desenfoque a la textura
-		// float blur_radius = 0.1;
-		// float blur_factor = smoothstep(0.0, blur_radius, v_uv.x) * smoothstep(1.0 - blur_radius, 1.0, v_uv.x) * smoothstep(0.0, blur_radius, v_uv.y) * smoothstep(1.0 - blur_radius, 1.0, v_uv.y);
-		// vec4 blurred_color = texture2D(u_texture, v_uv) * blur_factor;
-		
-		// gl_FragColor = blurred_color;
-		// }
+		}
 	}
 }
