@@ -14,9 +14,6 @@ Application::Application(const char *caption, int width, int height)
 	this->window_width = w;
 	this->window_height = h;
 	this->keystate = SDL_GetKeyboardState(nullptr);
-
-	this->tempbuffer.Resize(w, h);
-	this->framebuffer.Resize(w, h);
 }
 
 Application::~Application()
@@ -26,6 +23,7 @@ Application::~Application()
 void Application::Init(void)
 {
 	std::cout << "Initiating app..." << std::endl;
+	glEnable(GL_DEPTH_TEST);
 
 	// Crear un cuadrado
 	mesh = new Mesh();
@@ -33,18 +31,22 @@ void Application::Init(void)
 
 	// Cargar el shader
 	shader = Shader::Get("shaders/quad.vs", "shaders/quad.fs");
+	mesh_raster_shader = Shader::Get("shaders/raster.vs", "shaders/raster.fs");
 
 	// Crear una textura
 	texture = Texture::Get("images/fruits.png");
 
-	// Mesh *mesh_lee = new Mesh();
-	// mesh_lee->LoadOBJ("meshes/cleo.obj");
+	// Textura de cleo
+	texture_lee = Texture::Get("textures/cleo_color_specular.tga");
 
-	// // Asignar la malla a las entidades
-	// entity1.mesh = *mesh_lee;
+	Mesh *mesh_lee = new Mesh();
+	mesh_lee->LoadOBJ("meshes/cleo.obj");
+
+	// Asignar la malla a las entidades
+	entity1.mesh = *mesh_lee;
 
 	// // Establecer las matrices de modelo para posicionar las entidades
-	// entity1.modelMatrix.SetTranslation(0, -0.25, 0); // Posiciona entity1
+	entity1.modelMatrix.SetTranslation(0, -0.25, 0); // Posiciona entity1
 
 	camera = new Camera();
 
@@ -66,6 +68,7 @@ void Application::Init(void)
 
 void Application::Render(void)
 {
+
 	// framebuffer.Fill(Color::BLACK);
 
 	// // Creamos un zbuffer para la pantalla	podemos borrar esot no??
@@ -74,16 +77,31 @@ void Application::Render(void)
 
 	// framebuffer.Render(); // Renderizamos el framebuffer
 
-	shader->Enable();
-	shader->SetFloat("u_time", time);
-	shader->SetVector2("u_resolution", Vector2(window_width, window_height));
-	shader->SetUniform1("u_currentTask", currentTask);
-	shader->SetUniform1("u_subtask", subtask);
-	shader->SetTexture("u_texture", texture);
-	// printf("Subtask: %f\n", subtask);
-	// printf("Current Task: %d\n", currentTask);
-	mesh->Render();
-	shader->Disable();
+	if (currentTask != 4)
+	{
+		shader->Enable();
+		shader->SetFloat("u_time", time);
+		shader->SetVector2("u_resolution", Vector2(window_width, window_height));
+		shader->SetUniform1("u_currentTask", currentTask);
+		shader->SetUniform1("u_subtask", subtask);
+		shader->SetTexture("u_texture", texture);
+		// printf("Subtask: %f\n", subtask);
+		// printf("Current Task: %d\n", currentTask);
+		mesh->Render();
+		shader->Disable();
+	}
+	else
+	{
+		mesh_raster_shader->Enable();
+		mesh_raster_shader->SetVector2("u_resolution", Vector2(window_width, window_height));
+		mesh_raster_shader->SetMatrix44("u_model", entity1.modelMatrix);
+		mesh_raster_shader->SetTexture("u_texture", texture_lee);
+		mesh_raster_shader->SetMatrix44("u_viewprojection", camera->viewprojection_matrix);
+
+		entity1.Render(camera);
+
+		mesh_raster_shader->Disable();
+	}
 }
 
 void Application::Update(float seconds_elapsed)
@@ -215,28 +233,28 @@ void Application::OnMouseButtonUp(SDL_MouseButtonEvent event)
 	// std::cout << "Mouse button released: " << (int)event.button << std::endl;
 }
 
-void Application::DrawCirclesDDA(Vector2 p0, Vector2 p1, int radius, const Color &color)
-{
+// void Application::DrawCirclesDDA(Vector2 p0, Vector2 p1, int radius, const Color &color)
+// {
 
-	// Algrotimo similar al de la linea con DDA, pero usando circulos para rellenar el espacio entre los puntos, no pixeles, para un trazo mas suave
+// 	// Algrotimo similar al de la linea con DDA, pero usando circulos para rellenar el espacio entre los puntos, no pixeles, para un trazo mas suave
 
-	int dx = p1.x - p0.x;
-	int dy = p1.y - p0.y;
-	int d = std::max(abs(dx), abs(dy));
+// 	int dx = p1.x - p0.x;
+// 	int dy = p1.y - p0.y;
+// 	int d = std::max(abs(dx), abs(dy));
 
-	float xInc = dx / (float)d;
-	float yInc = dy / (float)d;
+// 	float xInc = dx / (float)d;
+// 	float yInc = dy / (float)d;
 
-	float x = p0.x;
-	float y = p0.y;
+// 	float x = p0.x;
+// 	float y = p0.y;
 
-	for (int i = 0; i <= d; i++)
-	{
-		framebuffer.DrawCircle((int)(x), (int)(y), radius, color, 0, true, color);
-		x += xInc;
-		y += yInc;
-	}
-}
+// 	for (int i = 0; i <= d; i++)
+// 	{
+// 		framebuffer.DrawCircle((int)(x), (int)(y), radius, color, 0, true, color);
+// 		x += xInc;
+// 		y += yInc;
+// 	}
+// }
 
 void Application::OnMouseMove(SDL_MouseButtonEvent event)
 {

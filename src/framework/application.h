@@ -67,7 +67,7 @@ public:
 	void OnFileChanged(const char *filename);
 
 	// CPU Global framebuffer
-	Image framebuffer;
+	// Image framebuffer;
 
 	// Declarar y crear un sistema de particulas
 	ParticleSystem particleSystem;
@@ -80,10 +80,11 @@ public:
 
 	// Declaramaos y creamos una mesh y un shader
 	Mesh *mesh;
-	Shader* shader;
-	
-	//Shader::Get("/res/shaders/quad.vs", "/res/shaders/quad.fs");
-	// Constructor and main methods
+	Shader *shader;
+	Shader *mesh_raster_shader;
+
+	// Shader::Get("/res/shaders/quad.vs", "/res/shaders/quad.fs");
+	//  Constructor and main methods
 	Application(const char *caption, int width, int height);
 	~Application();
 
@@ -98,8 +99,8 @@ public:
 		this->window_width = width;
 		this->window_height = height;
 
-		framebuffer.Resize(width, height); // Lab1: Resize framebuffer adaptandolo a la nueva resolucion de la pantalla
-		tempbuffer.Resize(width, height);  // Lab1: Resize tempbuffer adaptandolo a la nueva resolucion de la pantalla
+		// framebuffer.Resize(width, height); // Lab1: Resize framebuffer adaptandolo a la nueva resolucion de la pantalla
+		// tempbuffer.Resize(width, height);  // Lab1: Resize tempbuffer adaptandolo a la nueva resolucion de la pantalla
 	}
 
 	Vector2 GetWindowSize()
@@ -150,7 +151,8 @@ public:
 
 	// Establecemos la tarea actual
 	int currentTask = 1;
-	int subtask = 1;	
+	int subtask = 1;
 
 	Texture *texture;
+	Texture *texture_lee;
 };
