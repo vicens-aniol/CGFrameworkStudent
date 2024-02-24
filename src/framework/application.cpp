@@ -27,14 +27,13 @@ void Application::Init(void)
 {
 	std::cout << "Initiating app..." << std::endl;
 
-
 	// Crear un cuadrado
-    mesh = new Mesh();
-    mesh->CreateQuad(); // Asegúrate de tener este método en tu clase Mesh
+	mesh = new Mesh();
+	mesh->CreateQuad(); // Asegúrate de tener este método en tu clase Mesh
 
-    // Cargar el shader
+	// Cargar el shader
 	shader = Shader::Get("shaders/quad.vs", "shaders/quad.fs");
-	
+
 	// Crear una textura
 	texture = Texture::Get("images/fruits.png");
 
@@ -47,7 +46,6 @@ void Application::Init(void)
 	// // Establecer las matrices de modelo para posicionar las entidades
 	// entity1.modelMatrix.SetTranslation(0, -0.25, 0); // Posiciona entity1
 
-	
 	camera = new Camera();
 
 	// Image *texture1 = new Image();
@@ -64,13 +62,11 @@ void Application::Init(void)
 
 	// // Añadir las entidades a la lista
 	// entities.push_back(entity1);
-	
-	
 }
 
 void Application::Render(void)
 {
-	//framebuffer.Fill(Color::BLACK);
+	// framebuffer.Fill(Color::BLACK);
 
 	// // Creamos un zbuffer para la pantalla	podemos borrar esot no??
 	// zbuffer->Fill(1000000000.0f);
@@ -84,12 +80,11 @@ void Application::Render(void)
 	shader->SetUniform1("u_currentTask", currentTask);
 	shader->SetUniform1("u_subtask", subtask);
 	shader->SetTexture("u_texture", texture);
-	printf("Subtask: %f\n", subtask);
-	printf("Current Task: %d\n", currentTask);
-    mesh->Render();
-    shader->Disable();
+	// printf("Subtask: %f\n", subtask);
+	// printf("Current Task: %d\n", currentTask);
+	mesh->Render();
+	shader->Disable();
 }
-
 
 void Application::Update(float seconds_elapsed)
 {
@@ -160,8 +155,8 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 		break;
 	}
 	case SDLK_1:
-        currentTask = 1;
-        break;
+		currentTask = 1;
+		break;
 	case SDLK_2:
 		currentTask = 2;
 		break;
@@ -172,32 +167,38 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 		currentTask = 4;
 		break;
 	case SDLK_a:
-		if (currentTask >= 1 && currentTask <= 4) {
+		if (currentTask >= 1 && currentTask <= 4)
+		{
 			subtask = 1;
 		}
 		break;
 	case SDLK_b:
-		if (currentTask >= 1 && currentTask <= 4) {
+		if (currentTask >= 1 && currentTask <= 4)
+		{
 			subtask = 2;
 		}
 		break;
 	case SDLK_c:
-		if (currentTask >= 1 && currentTask <= 3) {
+		if (currentTask >= 1 && currentTask <= 3)
+		{
 			subtask = 3;
 		}
 		break;
 	case SDLK_d:
-		if (currentTask >= 1 && currentTask <= 3) {
+		if (currentTask >= 1 && currentTask <= 3)
+		{
 			subtask = 4;
 		}
-		break;	
+		break;
 	case SDLK_e:
-		if (currentTask >= 1 && currentTask <= 3) {
+		if (currentTask >= 1 && currentTask <= 3)
+		{
 			subtask = 5;
 		}
 		break;
 	case SDLK_f:
-		if (currentTask >= 1 && currentTask <= 3) {
+		if (currentTask >= 1 && currentTask <= 3)
+		{
 			subtask = 6;
 		}
 		break;
