@@ -89,7 +89,7 @@ void main()
 		// SUBTASCA E DEL EJERCICIO 1
 		else if (u_subtask == 5)
 		{
-			vec2 grid_pos = floor(aspect_corrected_uv * 16);
+			vec2 grid_pos = floor(aspect_corrected_uv * 16.0);
 
 			// Calculo del color
 			float checker = step(1.0, mod(grid_pos.x + grid_pos.y, 2.0));
@@ -102,7 +102,7 @@ void main()
 		} else if (u_subtask == 6){
 				// Variables de configuración del seno
 				float amplitude = 0.25; // La amplitud del seno
-				float frequency = 1; // La frecuencia del seno
+				float frequency = 1.0; // La frecuencia del seno
 
 				// Calcular la posición y del seno para la coordenada x actual
 				float PI = 3.141592;
@@ -112,10 +112,10 @@ void main()
 				vec3 green = vec3(0.0, 1.0, 0.0);
 				vec3 black = vec3(0.0, 0.0, 0.0);
 
-				float t = mix(amplitude, 1, v_uv.y); // Establecemos el rango de interpolación
+				float t = mix(amplitude, 1.0, v_uv.y); // Establecemos el rango de interpolación
 				vec3 color_above = mix(green, black, t);
 
-				float t2 = mix(0, 1- amplitude, v_uv.y); // Establecemos el rango de interpolación
+				float t2 = mix(0.0, 1.0- amplitude, v_uv.y); // Establecemos el rango de interpolación
 				vec3 color_below = mix(black, green, t2);
 
 				float above_sine = step(sine_y, aspect_corrected_uv.y);
@@ -180,28 +180,36 @@ void main()
 		// SUBTASCA A DEL EJERCICIO 3
 		if (u_subtask == 1)
 		{
-			// TODO : Añadir movimiento en funcion de u_time
-			// Rota la textura 180 grados invirtiendo las coordenadas de textura
-			vec2 rotatedCoords = vec2(1.0 - v_uv.x, 1.0 - v_uv.y);
+			// Rota la textura en función del tiempo
+			float rotationAngle = u_time * 0.5 * 3.14159;
+			float cosAngle = cos(rotationAngle);
+			float sinAngle = sin(rotationAngle);
+			vec2 rotatedCoords = vec2((v_uv.x - 0.5) * cosAngle - (v_uv.y - 0.5) * sinAngle + 0.5, (v_uv.x - 0.5) * sinAngle + (v_uv.y - 0.5) * cosAngle + 0.5);
+
 			vec4 color = texture2D(u_texture, rotatedCoords);
 			gl_FragColor = color;
 		}
 		// SUBTASCA B DEL EJERCICIO 3
     	else if (u_subtask == 2)
 		{
-		// TODO : Añadir movimiento en funcion de u_time
-        // Tamaño de los píxeles
-		float pixelSize = 1.0 / 25.0;
+			// Tamaño de los píxeles
+			float pixelSize = 1.0 / 25.0;
 
-		// Calcular las coordenadas del píxel correspondiente
-		vec2 pixelCoords = vec2(floor(v_uv.x / pixelSize) * pixelSize, floor(v_uv.y / pixelSize) * pixelSize);
+			// Calcular las coordenadas del píxel correspondiente
+			vec2 pixelCoords = vec2(floor(v_uv.x / pixelSize) * pixelSize, floor(v_uv.y / pixelSize) * pixelSize);
 
-		// Obtener el color del píxel correspondiente
-		vec4 pixelColor = texture2D(u_texture, pixelCoords);
+			// Obtener el color del píxel correspondiente
+			vec4 pixelColor = texture2D(u_texture, pixelCoords);
 
-		// Salida del color final
-		gl_FragColor = pixelColor;
+			// Aplicar movimiento en función de u_time
+			float movement = sin(u_time) * 0.1;
+			pixelCoords += vec2(movement, movement);
+
+			// Obtener el color del píxel movido
+			vec4 movedPixelColor = texture2D(u_texture, pixelCoords);
+
+			// Salida del color final
+			gl_FragColor = movedPixelColor;
 		}
 	}
-	
 }
