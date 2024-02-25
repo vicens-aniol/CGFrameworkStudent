@@ -12,8 +12,6 @@ void main()
 	vec2 aspect_corrected_uv = vec2(v_uv.x * aspect_ratio, v_uv.y); // Adaptamos las coordenadas al aspect
 	vec2 aspect_corrected_center = vec2(0.5 * aspect_ratio, 0.5); // Lo mismo con las coordenadas del centro de la pantalla
 
-	aspect_corrected_uv = (aspect_corrected_uv - aspect_corrected_center) / max(aspect_ratio, 1.0 / aspect_ratio) + aspect_corrected_center;
-
 	if (u_currentTask == 1)
 	{
 		// SUBTASCA A DEL EJERCICIO 1
@@ -113,14 +111,14 @@ void main()
 			float PI = 3.141592;
 
 			// Onda Seno Formula
-			float sine_y = amplitude * sin(v_uv.x * frequency * 2.0 * PI) + 0.5;
+			float sine_y = amplitude * sin(aspect_corrected_uv.x * frequency * 2.0 * PI) + 0.5;
 
 			// Colores verde y negro
 			vec3 green = vec3(0.0, 1.0, 0.0);
 			vec3 black = vec3(0.0, 0.0, 0.0);
 			
 			// Computo del punto máximo (amplitud) del degradado para la parte superior
-			float t = mix(amplitude, 1.0, v_uv.y); 
+			float t = mix(amplitude, 1.0, aspect_corrected_uv.y); 
 
 			// Calculo del color en funcion del máximo, determinado por el mix anterior
 			vec3 color_arriba = mix(green, black, t);
