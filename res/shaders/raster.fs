@@ -10,7 +10,10 @@ uniform sampler2D u_texture;
 
 void main()
 {
+
+	// Calculamos y establecemos el color de la textura al fragment color
 	vec4 texColor = texture2D(u_texture, v_uv);
 
+	// el texColor.a es el canal alpha de la textura
 	gl_FragColor = vec4( texColor.rgb, texColor.a );
 }

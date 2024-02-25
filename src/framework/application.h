@@ -154,5 +154,5 @@ public:
 	int subtask = 1;
 
 	Texture *texture;
-	Texture *texture_lee;
+	Texture *texture_cleo;
 };

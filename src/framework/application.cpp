@@ -25,11 +25,11 @@ void Application::Init(void)
 	std::cout << "Initiating app..." << std::endl;
 	glEnable(GL_DEPTH_TEST);
 
-	// Crear un cuadrado
+	// Inicializamos el mesh y creamos un quad
 	mesh = new Mesh();
-	mesh->CreateQuad(); // Asegúrate de tener este método en tu clase Mesh
+	mesh->CreateQuad(); 
 
-	// Cargar el shader
+	// Cargamos el shader
 	shader = Shader::Get("shaders/quad.vs", "shaders/quad.fs");
 	mesh_raster_shader = Shader::Get("shaders/raster.vs", "shaders/raster.fs");
 
@@ -37,15 +37,16 @@ void Application::Init(void)
 	texture = Texture::Get("images/fruits.png");
 
 	// Textura de cleo
-	texture_lee = Texture::Get("textures/cleo_color_specular.tga");
+	texture_cleo = Texture::Get("textures/cleo_color_specular.tga");
 
-	Mesh *mesh_lee = new Mesh();
-	mesh_lee->LoadOBJ("meshes/cleo.obj");
+	// Mesh de cleo
+	Mesh *mesh_cleo = new Mesh();
+	mesh_cleo->LoadOBJ("meshes/cleo.obj");
 
 	// Asignar la malla a las entidades
-	entity1.mesh = *mesh_lee;
+	entity1.mesh = *mesh_cleo;
 
-	// // Establecer las matrices de modelo para posicionar las entidades
+	//// Establecer las matrices de modelo para posicionar las entidades
 	entity1.modelMatrix.SetTranslation(0, -0.25, 0); // Posiciona entity1
 
 	camera = new Camera();
@@ -79,6 +80,7 @@ void Application::Render(void)
 
 	if (currentTask != 4)
 	{
+		// Habilitamos el shader y establecemos las variables uniformes para el shader si currentTask no es 4
 		shader->Enable();
 		shader->SetFloat("u_time", time);
 		shader->SetVector2("u_resolution", Vector2(window_width, window_height));
@@ -91,11 +93,12 @@ void Application::Render(void)
 		shader->Disable();
 	}
 	else
-	{
+	{  
+		// Si currentTask es 4, habilitamos el shader de rasterización y vectores y matrices para la tasca 4 
 		mesh_raster_shader->Enable();
 		mesh_raster_shader->SetVector2("u_resolution", Vector2(window_width, window_height));
 		mesh_raster_shader->SetMatrix44("u_model", entity1.modelMatrix);
-		mesh_raster_shader->SetTexture("u_texture", texture_lee);
+		mesh_raster_shader->SetTexture("u_texture", texture_cleo);
 		mesh_raster_shader->SetMatrix44("u_viewprojection", camera->viewprojection_matrix);
 
 		entity1.Render(camera);
@@ -197,25 +200,25 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 		}
 		break;
 	case SDLK_c:
-		if (currentTask >= 1 && currentTask <= 3)
+		if (currentTask >= 1 && currentTask <= 2)
 		{
 			subtask = 3;
 		}
 		break;
 	case SDLK_d:
-		if (currentTask >= 1 && currentTask <= 3)
+		if (currentTask >= 1 && currentTask <= 2)
 		{
 			subtask = 4;
 		}
 		break;
 	case SDLK_e:
-		if (currentTask >= 1 && currentTask <= 3)
+		if (currentTask >= 1 && currentTask <= 2)
 		{
 			subtask = 5;
 		}
 		break;
 	case SDLK_f:
-		if (currentTask >= 1 && currentTask <= 3)
+		if (currentTask >= 1 && currentTask <= 2)
 		{
 			subtask = 6;
 		}

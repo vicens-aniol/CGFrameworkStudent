@@ -100,6 +100,7 @@ void Entity::setMesh(const Mesh &mesh)
 //     }
 // }
 
+// Método para renderizar unicamente el mesh desde Enitity.
 void Entity::Render(Camera *camera)
 {
     mesh.Render();
