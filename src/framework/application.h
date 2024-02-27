@@ -12,6 +12,7 @@
 #include "entity.h"
 #include "camera.h"
 #include "shader.h"
+#include "material.h"
 
 // Necesitamos un estado para saber si estamos dibujando o no y el que
 enum DrawingState
@@ -149,10 +150,9 @@ public:
 
 	FloatImage *zbuffer;
 
-	// Establecemos la tarea actual
-	int currentTask = 1;
-	int subtask = 1;
-
 	Texture *texture;
 	Texture *texture_cleo;
+
+	// Lab5: Crear una instancia de la struct sUniformData de Material
+	Material::sUniformData materialData;
 };

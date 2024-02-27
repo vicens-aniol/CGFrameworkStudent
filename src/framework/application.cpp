@@ -27,7 +27,7 @@ void Application::Init(void)
 
 	// Inicializamos el mesh y creamos un quad
 	mesh = new Mesh();
-	mesh->CreateQuad(); 
+	mesh->CreateQuad();
 
 	// Cargamos el shader
 	shader = Shader::Get("shaders/quad.vs", "shaders/quad.fs");
@@ -78,33 +78,33 @@ void Application::Render(void)
 
 	// framebuffer.Render(); // Renderizamos el framebuffer
 
-	if (currentTask != 4)
-	{
-		// Habilitamos el shader y establecemos las variables uniformes para el shader si currentTask no es 4
-		shader->Enable();
-		shader->SetFloat("u_time", time);
-		shader->SetVector2("u_resolution", Vector2(window_width, window_height));
-		shader->SetUniform1("u_currentTask", currentTask);
-		shader->SetUniform1("u_subtask", subtask);
-		shader->SetTexture("u_texture", texture);
-		// printf("Subtask: %f\n", subtask);
-		// printf("Current Task: %d\n", currentTask);
-		mesh->Render();
-		shader->Disable();
-	}
-	else
-	{  
-		// Si currentTask es 4, habilitamos el shader de rasterización y vectores y matrices para la tasca 4 
-		mesh_raster_shader->Enable();
-		mesh_raster_shader->SetVector2("u_resolution", Vector2(window_width, window_height));
-		mesh_raster_shader->SetMatrix44("u_model", entity1.modelMatrix);
-		mesh_raster_shader->SetTexture("u_texture", texture_cleo);
-		mesh_raster_shader->SetMatrix44("u_viewprojection", camera->viewprojection_matrix);
+	// Si currentTask es 4, habilitamos el shader de rasterización y vectores y matrices para la tasca 4
+	mesh_raster_shader->Enable();
 
-		entity1.Render(camera);
+	Material::sUniformData uniformData;
 
-		mesh_raster_shader->Disable();
-	}
+	uniformData.model = entity1.modelMatrix;					// Matriz del modelo
+	uniformData.viewprojection = camera->viewprojection_matrix; // Matriz de vista y proyeccion de la camara
+	uniformData.La = Vector3(1.0, 1.0, 1.0);					// Luz ambiente
+
+	// Upload camera properties
+	mesh_raster_shader->SetMatrix44("u_viewprojection", camera->viewprojection_matrix);
+
+	uniformData.Ka = Vector3(0.2, 0.2, 0.2); // Coeficiente de reflexión ambiente
+	uniformData.Kd = Vector3(0.8, 0.8, 0.8); // Coeficiente de reflexión difusa
+	uniformData.Ks = Vector3(1.0, 1.0, 1.0); // Coeficiente de reflexión especular
+	uniformData.shininess = 32.0;			 // Brillo
+
+	mesh_raster_shader->SetMatrix44("u_model", entity1.modelMatrix);
+	mesh_raster_shader->SetTexture("u_texture", texture_cleo);
+	mesh_raster_shader->SetMatrix44("u_viewprojection", camera->viewprojection_matrix);
+
+	// FIXME: cambiar camara por la struct de uniformData de Material
+	entity1.Render(uniformData);
+
+	mesh_raster_shader->SetVector2("u_resolution", Vector2(window_width, window_height));
+
+	mesh_raster_shader->Disable();
 }
 
 void Application::Update(float seconds_elapsed)
@@ -167,61 +167,43 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 		camera->UpdateProjectionMatrix();
 		break;
 	}
-	case SDLK_p:
+
+	case SDLK_g:
 	{
-		camera->type = Camera::PERSPECTIVE;
-		propertyState = CAMERA_NONE;
-		camera->SetPerspective(camera->fov, static_cast<float>(window_width) / static_cast<float>(window_height), camera->near_plane, camera->far_plane);
-		camera->UpdateProjectionMatrix();
+		// GOURAUD SHADER
 		break;
 	}
+
+	case SDLK_p:
+	{
+		// camera->type = Camera::PERSPECTIVE;
+		// propertyState = CAMERA_NONE;
+		// camera->SetPerspective(camera->fov, static_cast<float>(window_width) / static_cast<float>(window_height), camera->near_plane, camera->far_plane);
+		// camera->UpdateProjectionMatrix();
+
+		// PHONG SHADER
+		break;
+	}
+
+	case SDLK_c:
+		break;
+	case SDLK_n:
+		break;
+	case SDLK_s:
+		break;
 	case SDLK_1:
-		currentTask = 1;
 		break;
 	case SDLK_2:
-		currentTask = 2;
 		break;
 	case SDLK_3:
-		currentTask = 3;
 		break;
 	case SDLK_4:
-		currentTask = 4;
 		break;
-	case SDLK_a:
-		if (currentTask >= 1 && currentTask <= 4)
-		{
-			subtask = 1;
-		}
+	case SDLK_5:
 		break;
-	case SDLK_b:
-		if (currentTask >= 1 && currentTask <= 4)
-		{
-			subtask = 2;
-		}
+	case SDLK_6:
 		break;
-	case SDLK_c:
-		if (currentTask >= 1 && currentTask <= 2)
-		{
-			subtask = 3;
-		}
-		break;
-	case SDLK_d:
-		if (currentTask >= 1 && currentTask <= 2)
-		{
-			subtask = 4;
-		}
-		break;
-	case SDLK_e:
-		if (currentTask >= 1 && currentTask <= 2)
-		{
-			subtask = 5;
-		}
-		break;
-	case SDLK_f:
-		if (currentTask >= 1 && currentTask <= 2)
-		{
-			subtask = 6;
-		}
+	case SDLK_7:
 		break;
 	}
 }
@@ -324,10 +306,12 @@ void Application::OnWheel(SDL_MouseWheelEvent event)
 	if (dy > 0)
 	{
 		camera->eye = camera->eye * 0.95;
+		camera->UpdateViewMatrix();
 	}
 	else if (dy < 0)
 	{
 		camera->eye = camera->eye * 1.05;
+		camera->UpdateViewMatrix();
 	}
 }
 
