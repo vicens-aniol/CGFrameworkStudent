@@ -9,8 +9,7 @@ class Light
 {
     // struct SLight de Material
 
-    Material::sLight light;
-
 public:
+    Material::sLight light;
     Light();
 };

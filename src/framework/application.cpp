@@ -25,20 +25,18 @@ void Application::Init(void)
 	std::cout << "Initiating app..." << std::endl;
 	glEnable(GL_DEPTH_TEST);
 
-	// Inicializamos el mesh y creamos un quad
-	mesh = new Mesh();
-	mesh->CreateQuad();
-
 	// Cargamos el shader
-	shader = Shader::Get("shaders/quad.vs", "shaders/quad.fs");
-	mesh_raster_shader = Shader::Get("shaders/raster.vs", "shaders/raster.fs");
-
-	// Crear una textura
-	texture = Texture::Get("images/fruits.png");
+	shader = Shader::Get("shaders/raster.vs", "shaders/raster.fs");
 
 	// Textura de cleo
 	texture_cleo = Texture::Get("textures/cleo_color_specular.tga");
 
+	// Material properties
+	Material *material = new Material();
+	material->shader = shader;
+	material->texture = texture_cleo;
+
+	// 3d properties
 	// Mesh de cleo
 	Mesh *mesh_cleo = new Mesh();
 	mesh_cleo->LoadOBJ("meshes/cleo.obj");
@@ -46,65 +44,46 @@ void Application::Init(void)
 	// Asignar la malla a las entidades
 	entity1.mesh = *mesh_cleo;
 
-	//// Establecer las matrices de modelo para posicionar las entidades
 	entity1.modelMatrix.SetTranslation(0, -0.25, 0); // Posiciona entity1
 
+	entity1.material = material;
+
+	// camera properties
+
 	camera = new Camera();
-
-	// Image *texture1 = new Image();
-
-	// !texture1->LoadTGA("textures/cleo_color_specular.tga", true) ? printf("No se ha podido cargar la textura\n") : printf("Textura cargada correctamente\n");
-
-	// entity1.texture = texture1;
-	// zbuffer = new FloatImage(framebuffer.width, framebuffer.height);
-	// zbuffer->Fill(1000000000.0f);
 
 	// Configurar la vista de la cámara y la perspectiva
 	camera->LookAt(Vector3(0, 0, 1), Vector3(0, 0, 0), Vector3::UP);
 	camera->SetPerspective(fov, aspect, near_plane, far_plane); // Iniciamos Perpsective por defecto
 
-	// // Añadir las entidades a la lista
-	// entities.push_back(entity1);
+	uniformData.viewprojection = camera->viewprojection_matrix;
+
+	// light properties
+
+	// Llenamos un elemento de la lista de lights
+	Light *lightBlanco = new Light();
+	lightBlanco->light.position = Vector3(0, 0, 0);
+	lightBlanco->light.Id = Vector3(1, 1, 1);
+	lightBlanco->light.Is = Vector3(1, 1, 1);
+
+	lights.push_back(lightBlanco);
+
+	uniformData.light = lights[0]->light;
+	uniformData.La = La;
+
+	// propiedades globales
+	uniformData.Ka = Vector3(0.2, 0.2, 0.2);
+	uniformData.Kd = Vector3(0.8, 0.8, 0.8);
+	uniformData.Ks = Vector3(1.0, 1.0, 1.0);
+	uniformData.shininess = 32.0;
 }
 
 void Application::Render(void)
 {
 
-	// framebuffer.Fill(Color::BLACK);
+	// shader->SetVector2("u_resolution", Vector2(window_width, window_height));
 
-	// // Creamos un zbuffer para la pantalla	podemos borrar esot no??
-	// zbuffer->Fill(1000000000.0f);
-	// entity1.Render(&framebuffer, camera, Color::WHITE, zbuffer);
-
-	// framebuffer.Render(); // Renderizamos el framebuffer
-
-	// Si currentTask es 4, habilitamos el shader de rasterización y vectores y matrices para la tasca 4
-	mesh_raster_shader->Enable();
-
-	Material::sUniformData uniformData;
-
-	uniformData.model = entity1.modelMatrix;					// Matriz del modelo
-	uniformData.viewprojection = camera->viewprojection_matrix; // Matriz de vista y proyeccion de la camara
-	uniformData.La = Vector3(1.0, 1.0, 1.0);					// Luz ambiente
-
-	// Upload camera properties
-	mesh_raster_shader->SetMatrix44("u_viewprojection", camera->viewprojection_matrix);
-
-	uniformData.Ka = Vector3(0.2, 0.2, 0.2); // Coeficiente de reflexión ambiente
-	uniformData.Kd = Vector3(0.8, 0.8, 0.8); // Coeficiente de reflexión difusa
-	uniformData.Ks = Vector3(1.0, 1.0, 1.0); // Coeficiente de reflexión especular
-	uniformData.shininess = 32.0;			 // Brillo
-
-	mesh_raster_shader->SetMatrix44("u_model", entity1.modelMatrix);
-	mesh_raster_shader->SetTexture("u_texture", texture_cleo);
-	mesh_raster_shader->SetMatrix44("u_viewprojection", camera->viewprojection_matrix);
-
-	// FIXME: cambiar camara por la struct de uniformData de Material
 	entity1.Render(uniformData);
-
-	mesh_raster_shader->SetVector2("u_resolution", Vector2(window_width, window_height));
-
-	mesh_raster_shader->Disable();
 }
 
 void Application::Update(float seconds_elapsed)
@@ -259,6 +238,7 @@ void Application::OnMouseMove(SDL_MouseButtonEvent event)
 		camera->center = camera->center + delta_position;
 
 		camera->UpdateViewMatrix();
+		uniformData.viewprojection = camera->viewprojection_matrix;
 	}
 	else if (mouse_state == SDL_BUTTON_LEFT)
 	{
@@ -291,6 +271,7 @@ void Application::OnMouseMove(SDL_MouseButtonEvent event)
 		camera->eye = camera->center + center_to_eye;
 
 		camera->UpdateViewMatrix();
+		uniformData.viewprojection = camera->viewprojection_matrix;
 	}
 
 	// Actualizar la posición anterior del ratón

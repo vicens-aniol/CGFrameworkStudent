@@ -1,3 +1,5 @@
+#ifndef MATERIAL_H
+#define MATERIAL_H
 
 #include "mesh.h"
 #include "image.h"
@@ -7,19 +9,12 @@
 
 class Material
 {
+
+public:
     // Shader y textura
     Shader *shader;
     Texture *texture;
 
-    // Color componentes
-    Vector3 Ka;
-    Vector3 Kd;
-    Vector3 Ks;
-
-    // Shininess
-    float shininess;
-
-public:
     Material();
 
     struct sLight
@@ -43,12 +38,11 @@ public:
         Vector3 Ks;
 
         float shininess;
-
-        // luces de la escena
-        // TODO: añadir luces de la escena
     };
 
     // Metodos enable y disable
     void Enable(const sUniformData &uniformData);
     void Disable();
 };
+
+#endif

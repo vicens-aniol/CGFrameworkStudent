@@ -24,8 +24,11 @@ public:
     // Lab 3: Texture for the entity
     Image *texture;
 
+    // Lab 5: Material for the entity
+    Material *material;
+
     // Lab 4: Shader for the entity
-    Shader *shader;
+    // Shader *shader;
 
     // Constructor por defecto
     Entity();

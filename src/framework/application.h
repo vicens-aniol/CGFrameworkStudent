@@ -13,6 +13,7 @@
 #include "camera.h"
 #include "shader.h"
 #include "material.h"
+#include "light.h"
 
 // Necesitamos un estado para saber si estamos dibujando o no y el que
 enum DrawingState
@@ -154,5 +155,12 @@ public:
 	Texture *texture_cleo;
 
 	// Lab5: Crear una instancia de la struct sUniformData de Material
-	Material::sUniformData materialData;
+	Material::sUniformData uniformData;
+
+	// Creación de array con instancias de punteros de luces
+	std::vector<Light *> lights;
+
+	// Luz ambiente, vector3
+
+	Vector3 La;
 };

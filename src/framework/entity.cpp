@@ -35,7 +35,12 @@ void Entity::setMesh(const Mesh &mesh)
 // Método para renderizar unicamente el mesh desde Enitity.
 void Entity::Render(Material::sUniformData uniformData)
 {
+    // Update model matrix
+    uniformData.model = modelMatrix;
+    material->Enable(uniformData);
     mesh.Render();
+    material->Disable();
+    // mesh.Render();
 }
 
 void Entity::Update(float seconds_elapsed)
