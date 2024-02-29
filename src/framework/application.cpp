@@ -31,12 +31,16 @@ void Application::Init(void)
 	// Textura de cleo
 	texture_cleo = Texture::Get("textures/cleo_color_specular.tga");
 
-	// Material properties
+	// propiedades del material
 	Material *material = new Material();
 	material->shader = shader;
 	material->texture = texture_cleo;
 
-	// 3d properties
+	uniformData.Ka = Vector3(0.2, 0.2, 0.2);
+	uniformData.Kd = Vector3(0.8, 0.8, 0.8);
+	uniformData.Ks = Vector3(1.0, 1.0, 1.0);
+
+	// propiedades 3d
 	// Mesh de cleo
 	Mesh *mesh_cleo = new Mesh();
 	mesh_cleo->LoadOBJ("meshes/cleo.obj");
@@ -48,7 +52,7 @@ void Application::Init(void)
 
 	entity1.material = material;
 
-	// camera properties
+	// propiedades camara
 
 	camera = new Camera();
 
@@ -58,7 +62,7 @@ void Application::Init(void)
 
 	uniformData.viewprojection = camera->viewprojection_matrix;
 
-	// light properties
+	// propiedades luz
 
 	// Llenamos un elemento de la lista de lights
 	Light *lightBlanco = new Light();
@@ -72,9 +76,6 @@ void Application::Init(void)
 	uniformData.La = La;
 
 	// propiedades globales
-	uniformData.Ka = Vector3(0.2, 0.2, 0.2);
-	uniformData.Kd = Vector3(0.8, 0.8, 0.8);
-	uniformData.Ks = Vector3(1.0, 1.0, 1.0);
 	uniformData.shininess = 32.0;
 }
 
