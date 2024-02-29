@@ -239,6 +239,7 @@ void Application::OnMouseMove(SDL_MouseButtonEvent event)
 		camera->center = camera->center + delta_position;
 
 		camera->UpdateViewMatrix();
+		// actualizamos la viewprojection del material
 		uniformData.viewprojection = camera->viewprojection_matrix;
 	}
 	else if (mouse_state == SDL_BUTTON_LEFT)
@@ -272,6 +273,7 @@ void Application::OnMouseMove(SDL_MouseButtonEvent event)
 		camera->eye = camera->center + center_to_eye;
 
 		camera->UpdateViewMatrix();
+		// actualizamos la viewprojection
 		uniformData.viewprojection = camera->viewprojection_matrix;
 	}
 
@@ -289,11 +291,15 @@ void Application::OnWheel(SDL_MouseWheelEvent event)
 	{
 		camera->eye = camera->eye * 0.95;
 		camera->UpdateViewMatrix();
+		// actualizamos la viewprojection del material
+		uniformData.viewprojection = camera->viewprojection_matrix;
 	}
 	else if (dy < 0)
 	{
 		camera->eye = camera->eye * 1.05;
 		camera->UpdateViewMatrix();
+		// actualizamos la viewprojection del material
+		uniformData.viewprojection = camera->viewprojection_matrix;
 	}
 }
 
