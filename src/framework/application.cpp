@@ -36,9 +36,9 @@ void Application::Init(void)
 	material->shader = shader;
 	material->texture = texture_cleo;
 
-	uniformData.Ka = Vector3(0.2, 0.2, 0.2);
-	uniformData.Kd = Vector3(0.8, 0.8, 0.8);
-	uniformData.Ks = Vector3(1.0, 1.0, 1.0);
+	uniformData.Ka = Vector3(0.3, 0.3, 0.3);
+	uniformData.Kd = Vector3(0.9, 0.9, 0.9);
+	uniformData.Ks = Vector3(0.5, 0.5, 0.5);
 
 	// propiedades 3d
 	// Mesh de cleo
@@ -66,17 +66,18 @@ void Application::Init(void)
 
 	// Llenamos un elemento de la lista de lights
 	Light *lightBlanco = new Light();
-	lightBlanco->light.position = Vector3(0, 0, 0);
-	lightBlanco->light.Id = Vector3(1, 1, 1);
-	lightBlanco->light.Is = Vector3(1, 1, 1);
+	lightBlanco->light.position = Vector3(0, 4, 2);
+	lightBlanco->light.Id = Vector3(2);
+	lightBlanco->light.Is = Vector3(1);
 
 	lights.push_back(lightBlanco);
 
 	uniformData.light = lights[0]->light;
+	La = Vector3(0.5);
 	uniformData.La = La;
 
 	// propiedades globales
-	uniformData.shininess = 32.0;
+	uniformData.shininess = 50.0;
 }
 
 void Application::Render(void)
@@ -89,12 +90,12 @@ void Application::Render(void)
 
 void Application::Update(float seconds_elapsed)
 {
-	//FIXME: PROPUESTA 
-	// // Actualizar la matriz de vista-proyección
-    // uniformData.viewprojection = camera->viewprojection_matrix;
+	// FIXME: PROPUESTA
+	//  // Actualizar la matriz de vista-proyección
+	//  uniformData.viewprojection = camera->viewprojection_matrix;
 
-    // // Actualizar las propiedades de la luz
-    // uniformData.light = lights[0]->light;
+	// // Actualizar las propiedades de la luz
+	// uniformData.light = lights[0]->light;
 }
 
 // keyboard press event

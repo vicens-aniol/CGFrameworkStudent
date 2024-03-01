@@ -11,7 +11,9 @@ void Material::Enable(const sUniformData &uniformData)
 { // constante porque no cambiará durante el ciclo de vida del objeto
     // Habilitar el shader
     shader->Enable();
+    shader->SetTexture("u_texture", texture);
 
+    shader->SetVector3("u_La", uniformData.La);
     // Subir las propiedades del material al shader
     shader->SetVector3("u_Ka", uniformData.Ka);
     shader->SetVector3("u_Kd", uniformData.Kd);
@@ -26,10 +28,6 @@ void Material::Enable(const sUniformData &uniformData)
     // Subir las matrices y la luz ambiental al shader
     shader->SetMatrix44("u_model", uniformData.model);
     shader->SetMatrix44("u_viewprojection", uniformData.viewprojection);
-    shader->SetVector3("u_La", uniformData.La);
-
-    //shader->SetTexture("u_texture", texture);
-    
 }
 
 void Material::Disable()
