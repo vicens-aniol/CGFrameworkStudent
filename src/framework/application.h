@@ -158,6 +158,8 @@ public:
 	Shader *shaderGouraud;
 	Shader *shaderPhong;
 
+	Material *material;
+
 	// Lab5: Crear una instancia de la struct sUniformData de Material
 	Material::sUniformData uniformData;
 

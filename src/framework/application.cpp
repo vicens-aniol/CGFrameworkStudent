@@ -29,15 +29,14 @@ void Application::Init(void)
 	shaderGouraud = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
 	shaderPhong = Shader::Get("shaders/phong.vs", "shaders/phong.fs");
 
-	// Inicialmente usamos el shader Gouraud
-	shader = shaderGouraud;
-
 	// Textura de cleo
 	texture_cleo = Texture::Get("textures/cleo_color_specular.tga");
 
 	// propiedades del material
-	Material *material = new Material();
-	material->shader = shader;
+	material = new Material();
+
+	// Inicialmente usamos el shader Gouraud
+	material->shader = shaderGouraud;
 	material->texture = texture_cleo;
 
 	uniformData.Ka = Vector3(0.3, 0.3, 0.3);
@@ -156,14 +155,14 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 	case SDLK_g:
 	{
 		// Cambiamos a GOURAUD SHADER
-		shader = shaderGouraud;
+		material->shader = shaderGouraud;
 		break;
 	}
 
 	case SDLK_p:
 	{
 		// Cambiar a PHONG SHADER
-		shader = shaderPhong;
+		material->shader = shaderPhong;
 		break;
 	}
 
