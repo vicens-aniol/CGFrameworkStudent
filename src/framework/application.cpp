@@ -26,7 +26,7 @@ void Application::Init(void)
 	glEnable(GL_DEPTH_TEST);
 
 	// Cargamos el shader
-	shader = Shader::Get("shaders/raster.vs", "shaders/raster.fs");
+	shader = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
 
 	// Textura de cleo
 	texture_cleo = Texture::Get("textures/cleo_color_specular.tga");
@@ -89,6 +89,12 @@ void Application::Render(void)
 
 void Application::Update(float seconds_elapsed)
 {
+	//FIXME: PROPUESTA 
+	// // Actualizar la matriz de vista-proyección
+    // uniformData.viewprojection = camera->viewprojection_matrix;
+
+    // // Actualizar las propiedades de la luz
+    // uniformData.light = lights[0]->light;
 }
 
 // keyboard press event
