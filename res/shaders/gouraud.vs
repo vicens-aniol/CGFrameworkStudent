@@ -11,6 +11,8 @@ uniform vec3 u_Is;
 uniform mat4 u_model; 
 uniform mat4 u_viewprojection; 
 
+varying vec4 v_color;
+
 void main()
 {
     vec3 P = vec3(0.0);
@@ -26,5 +28,6 @@ void main()
     vec3 specular = u_Ks * pow(max(dot(R, V), 0.0), u_shininess) * u_Is;
 
     vec4 color = vec4(ambient + diffuse + specular, 1.0);
+    v_color = color;
     gl_Position = u_viewprojection * u_model * vec4(P, 1.0);
 }

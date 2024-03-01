@@ -28,7 +28,7 @@ void Material::Enable(const sUniformData &uniformData)
     shader->SetMatrix44("u_viewprojection", uniformData.viewprojection);
     shader->SetVector3("u_La", uniformData.La);
 
-    shader->SetTexture("u_texture", texture);
+    //shader->SetTexture("u_texture", texture);
     
 }
 
