@@ -23,12 +23,11 @@ void main()
 {
     v_uv = gl_MultiTexCoord0.xy;
 
-       // de local a world
+    // de local a world
     vec3 world_position = (u_model * vec4( gl_Vertex.xyz, 1.0)).xyz;
 
     // de local a world normal
-vec3 world_normal = normalize((u_model * vec4(gl_Normal.xyz, 0.0)).xyz);
-
+    vec3 world_normal = normalize((u_model * vec4(gl_Normal.xyz, 0.0)).xyz);
 
     // Direccion de la luz
     vec3 L = normalize(u_lightposition - world_position);

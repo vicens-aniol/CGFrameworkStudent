@@ -154,6 +154,10 @@ public:
 	Texture *texture;
 	Texture *texture_cleo;
 
+	//Declaramos los shaders
+	Shader *shaderGouraud;
+	Shader *shaderPhong;
+
 	// Lab5: Crear una instancia de la struct sUniformData de Material
 	Material::sUniformData uniformData;
 

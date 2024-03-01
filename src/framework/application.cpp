@@ -26,7 +26,11 @@ void Application::Init(void)
 	glEnable(GL_DEPTH_TEST);
 
 	// Cargamos el shader
-	shader = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
+	shaderGouraud = Shader::Get("shaders/gouraud.vs", "shaders/gouraud.fs");
+	shaderPhong = Shader::Get("shaders/phong.vs", "shaders/phong.fs");
+
+	// Inicialmente usamos el shader Gouraud
+	shader = shaderGouraud;
 
 	// Textura de cleo
 	texture_cleo = Texture::Get("textures/cleo_color_specular.tga");
@@ -90,12 +94,6 @@ void Application::Render(void)
 
 void Application::Update(float seconds_elapsed)
 {
-	// FIXME: PROPUESTA
-	//  // Actualizar la matriz de vista-proyección
-	//  uniformData.viewprojection = camera->viewprojection_matrix;
-
-	// // Actualizar las propiedades de la luz
-	// uniformData.light = lights[0]->light;
 }
 
 // keyboard press event
@@ -157,18 +155,15 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 
 	case SDLK_g:
 	{
-		// GOURAUD SHADER
+		// Cambiamos a GOURAUD SHADER
+		shader = shaderGouraud;
 		break;
 	}
 
 	case SDLK_p:
 	{
-		// camera->type = Camera::PERSPECTIVE;
-		// propertyState = CAMERA_NONE;
-		// camera->SetPerspective(camera->fov, static_cast<float>(window_width) / static_cast<float>(window_height), camera->near_plane, camera->far_plane);
-		// camera->UpdateProjectionMatrix();
-
-		// PHONG SHADER
+		// Cambiar a PHONG SHADER
+		shader = shaderPhong;
 		break;
 	}
 
