@@ -35,10 +35,10 @@ void Application::Init(void)
 
 	// propiedades del material
 	material = new Material();
-
 	// Inicialmente usamos el shader Gouraud
 	material->shader = shaderGouraud;
 	material->texture = texture_cleo;
+	material->texture_normal = texture_normal;
 
 	uniformData.Ka = Vector3(0.3, 0.3, 0.3);
 	uniformData.Kd = Vector3(0.9, 0.9, 0.9);
@@ -170,12 +170,12 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 	}
 
 	case SDLK_c:
-	    uniformData.texture_flags.x = (uniformData.texture_flags.x == 1.0) ? 0.0 : 1.0; // Toggle uso de textura de color
+		uniformData.texture_flags.x = (uniformData.texture_flags.x == 1.0) ? 0.0 : 1.0; // Toggle uso de textura de color
 		break;
 	case SDLK_s:
-	    uniformData.texture_flags.y = (uniformData.texture_flags.y == 1.0) ? 0.0 : 1.0; // Toggle uso de textura especular
+		uniformData.texture_flags.y = (uniformData.texture_flags.y == 1.0) ? 0.0 : 1.0; // Toggle uso de textura especular
 		break;
-	case SDLK_n:            
+	case SDLK_n:
 		uniformData.texture_flags.z = (uniformData.texture_flags.z == 1.0) ? 0.0 : 1.0; // Toggle uso de textura normal
 		break;
 	case SDLK_1:
