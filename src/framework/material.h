@@ -14,6 +14,7 @@ public:
     // Shader y textura
     Shader *shader;
     Texture *texture;
+    Texture *texture_normal;
 
     Material();
 
@@ -38,6 +39,8 @@ public:
         Vector3 Ks;
 
         float shininess;
+
+        Vector3 texture_flags;
     };
 
     // Metodos enable y disable

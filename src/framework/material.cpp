@@ -12,6 +12,9 @@ void Material::Enable(const sUniformData &uniformData)
     // Habilitar el shader
     shader->Enable();
     shader->SetTexture("u_texture", texture);
+    shader->SetTexture("u_texture_normal", texture_normal);
+
+    shader->SetVector3("u_texture_flags", uniformData.texture_flags);
 
     shader->SetVector3("u_La", uniformData.La);
     // Subir las propiedades del material al shader

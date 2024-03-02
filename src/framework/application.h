@@ -153,6 +153,7 @@ public:
 
 	Texture *texture;
 	Texture *texture_cleo;
+	Texture *texture_normal;
 
 	//Declaramos los shaders
 	Shader *shaderGouraud;

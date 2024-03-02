@@ -31,6 +31,7 @@ void Application::Init(void)
 
 	// Textura de cleo
 	texture_cleo = Texture::Get("textures/cleo_color_specular.tga");
+	texture_normal = Texture::Get("textures/cleo_normal.tga");
 
 	// propiedades del material
 	material = new Material();
@@ -42,6 +43,8 @@ void Application::Init(void)
 	uniformData.Ka = Vector3(0.3, 0.3, 0.3);
 	uniformData.Kd = Vector3(0.9, 0.9, 0.9);
 	uniformData.Ks = Vector3(0.5, 0.5, 0.5);
+
+	uniformData.texture_flags = Vector3(0.0, 0.0, 0.0);
 
 	// propiedades 3d
 	// Mesh de cleo
@@ -167,10 +170,13 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 	}
 
 	case SDLK_c:
-		break;
-	case SDLK_n:
+	    uniformData.texture_flags.x = (uniformData.texture_flags.x == 1.0) ? 0.0 : 1.0; // Toggle uso de textura de color
 		break;
 	case SDLK_s:
+	    uniformData.texture_flags.y = (uniformData.texture_flags.y == 1.0) ? 0.0 : 1.0; // Toggle uso de textura especular
+		break;
+	case SDLK_n:            
+		uniformData.texture_flags.z = (uniformData.texture_flags.z == 1.0) ? 0.0 : 1.0; // Toggle uso de textura normal
 		break;
 	case SDLK_1:
 		break;
