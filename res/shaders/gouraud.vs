@@ -38,7 +38,7 @@ void main()
     vec3 V = normalize(-world_position); // la camera està al centre de coordenades
 
     // calculo del reflejo sobre la normal
-    vec3 R = normalize(reflect(-L, world_normal));
+    vec3 R = reflect(-L, world_normal);
 
     // calculo de distancia para atenuacion
     float dist = distance(u_lightposition, world_position);
