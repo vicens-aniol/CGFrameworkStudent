@@ -104,7 +104,7 @@ void Application::Init(void)
 	uniformData.La = La;
 
 	// propiedades globales
-	uniformData.shininess = 10.0;
+	uniformData.shininess = 1.0;
 }
 
 void Application::Render(void)
