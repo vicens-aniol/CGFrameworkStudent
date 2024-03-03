@@ -35,12 +35,26 @@ void Entity::setMesh(const Mesh &mesh)
 // Método para renderizar unicamente el mesh desde Enitity.
 void Entity::Render(Material::sUniformData uniformData)
 {
-    // Update model matrix
+    glDepthFunc(GL_LEQUAL);
+    // model matrix
     uniformData.model = modelMatrix;
-    material->Enable(uniformData);
+
+    glDisable(GL_BLEND);
+
+    material->Enable(uniformData, 0);
     mesh.Render();
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    for (int i = 1; i < uniformData.num_lights; ++i)
+    {
+        material->Enable(uniformData, i);
+        mesh.Render();
+    }
     material->Disable();
-    // mesh.Render();
+
+    glDisable(GL_BLEND);
 }
 
 void Entity::Update(float seconds_elapsed)

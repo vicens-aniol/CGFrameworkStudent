@@ -40,11 +40,11 @@ void Application::Init(void)
 	material->texture = texture_cleo;
 	material->texture_normal = texture_normal;
 
-	uniformData.Ka = Vector3(0.3, 0.3, 0.3);
-	uniformData.Kd = Vector3(0.9, 0.9, 0.9);
-	uniformData.Ks = Vector3(0.5, 0.5, 0.5);
+	uniformData.Ka = Vector3(0.2);
+	uniformData.Kd = Vector3(1);
+	uniformData.Ks = Vector3(0.9);
 
-	uniformData.texture_flags = Vector3(0.0, 0.0, 0.0);
+	uniformData.texture_flags = Vector3(1.0, 1.0, 1.0);
 
 	// propiedades 3d
 	// Mesh de cleo
@@ -70,20 +70,41 @@ void Application::Init(void)
 
 	// propiedades luz
 
-	// Llenamos un elemento de la lista de lights
-	Light *lightBlanco = new Light();
-	lightBlanco->light.position = Vector3(0, 4, 2);
-	lightBlanco->light.Id = Vector3(2);
-	lightBlanco->light.Is = Vector3(1);
+	// Llenamos elemtnos de la lista de lights
 
+	Light *lightBlanco = new Light();
+	lightBlanco->light.position = Vector3(0.75, 0.75, 0.75);
+	lightBlanco->light.Id = Vector3(1);
+	lightBlanco->light.Is = Vector3(0.2);
 	lights.push_back(lightBlanco);
 
-	uniformData.light = lights[0]->light;
-	La = Vector3(0.5);
+	Light *lightRojo = new Light();
+	lightRojo->light.position = Vector3(-0.75, 0.5, 0.5);
+	lightRojo->light.Id = Vector3(1, 0, 0); // Red light
+	lightRojo->light.Is = Vector3(0.2);
+	lights.push_back(lightRojo);
+
+	Light *lightAzul = new Light();
+	lightAzul->light.position = Vector3(0.5, -0.75, 0.5);
+	lightAzul->light.Id = Vector3(0, 0, 1); // Blue light
+	lightAzul->light.Is = Vector3(0.2);
+	lights.push_back(lightAzul);
+
+	// numero de luces
+	uniformData.num_lights = lights.size();
+
+	// todas las lights al uniformdata
+	for (size_t i = 0; i < lights.size(); ++i)
+	{
+		uniformData.lights[i] = lights[i]->light;
+	}
+
+	// luz de ambiente
+	La = Vector3(0.2);
 	uniformData.La = La;
 
 	// propiedades globales
-	uniformData.shininess = 50.0;
+	uniformData.shininess = 10.0;
 }
 
 void Application::Render(void)
@@ -179,18 +200,13 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 		uniformData.texture_flags.z = (uniformData.texture_flags.z == 1.0) ? 0.0 : 1.0; // Toggle uso de textura normal
 		break;
 	case SDLK_1:
+		uniformData.num_lights = 1;
 		break;
 	case SDLK_2:
+		uniformData.num_lights = 2;
 		break;
 	case SDLK_3:
-		break;
-	case SDLK_4:
-		break;
-	case SDLK_5:
-		break;
-	case SDLK_6:
-		break;
-	case SDLK_7:
+		uniformData.num_lights = 3;
 		break;
 	}
 }

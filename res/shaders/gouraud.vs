@@ -25,27 +25,32 @@ void main()
 
     // de local a world
     vec3 world_position = (u_model * vec4( gl_Vertex.xyz, 1.0)).xyz;
+    v_world_position = world_position;
 
     // de local a world normal
     vec3 world_normal = normalize((u_model * vec4(gl_Normal.xyz, 0.0)).xyz);
+    v_world_normal = world_normal;
 
     // Direccion de la luz
     vec3 L = normalize(u_lightposition - world_position);
 
     // Dirección de la vista
-    vec3 V = normalize(-world_position); 
+    vec3 V = normalize(-world_position); // la camera està al centre de coordenades
 
-    // calculo del reglejo sobre la normal
-    vec3 R = reflect(-L, world_normal);
+    // calculo del reflejo sobre la normal
+    vec3 R = normalize(reflect(-L, world_normal));
 
-    // Luz de ambiente calculo
+    // calculo de distancia para atenuacion
+    float dist = distance(u_lightposition, world_position);
+
+    // luz de ambiente calculo
     vec3 ambient = u_Ka * u_La;
 
-    // iluminacion difusa calculo
-    vec3 diffuse = u_Kd * max(dot(L, world_normal), 0.0) * u_Id;
+    // iluminacion difusa calculo con atenuacion
+    vec3 diffuse = (u_Kd * clamp(dot(L, world_normal), 0.0, 1.0) * u_Id) / (dist * dist);
 
-    // specular iluminacion calculo
-    vec3 specular = u_Ks * pow(max(dot(R, V), 0.0), u_shininess) * u_Is;
+    // specular iluminacion calculo con atenuacion
+    vec3 specular = (u_Ks * pow(clamp(dot(R, V), 0.0, 1.0), u_shininess) * u_Is) / (dist * dist);
 
     // combinacion de todas y 1.0, asignando al varying para el fragment shader
     v_color = vec4(ambient + diffuse + specular, 1.0);

@@ -7,16 +7,18 @@ Material::Material()
 
 // Métodos enable y disable
 
-void Material::Enable(const sUniformData &uniformData)
+void Material::Enable(const sUniformData &uniformData, int light_index)
 { // constante porque no cambiará durante el ciclo de vida del objeto
-    // Habilitar el shader
+
     shader->Enable();
     shader->SetTexture("u_texture", texture);
     shader->SetTexture("u_texture_normal", texture_normal);
 
     shader->SetVector3("u_texture_flags", uniformData.texture_flags);
 
-    shader->SetVector3("u_La", uniformData.La);
+    if (light_index == 0)
+        shader->SetVector3("u_La", uniformData.La);
+
     // Subir las propiedades del material al shader
     shader->SetVector3("u_Ka", uniformData.Ka);
     shader->SetVector3("u_Kd", uniformData.Kd);
@@ -24,9 +26,9 @@ void Material::Enable(const sUniformData &uniformData)
     shader->SetFloat("u_shininess", uniformData.shininess);
 
     // Subir las propiedades de la luz al shader
-    shader->SetVector3("u_lightposition", uniformData.light.position);
-    shader->SetVector3("u_Id", uniformData.light.Id);
-    shader->SetVector3("u_Is", uniformData.light.Is);
+    shader->SetVector3("u_lightposition", uniformData.lights[light_index].position);
+    shader->SetVector3("u_Id", uniformData.lights[light_index].Id);
+    shader->SetVector3("u_Is", uniformData.lights[light_index].Is);
 
     // Subir las matrices y la luz ambiental al shader
     shader->SetMatrix44("u_model", uniformData.model);

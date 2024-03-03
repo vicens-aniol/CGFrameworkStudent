@@ -7,6 +7,8 @@
 #include "texture.h"
 #include "shader.h"
 
+#define MAX_LUCES 5
+
 class Material
 {
 
@@ -31,7 +33,8 @@ public:
         Matrix44 viewprojection; // Matriz de vista y proyeccion de la camara
         Vector3 La;              // Luz ambiente
 
-        sLight light; // Luz
+        sLight lights[MAX_LUCES]; // Luces
+        int num_lights;           // Numero de luces
 
         // Propiedades de material
         Vector3 Ka;
@@ -44,7 +47,7 @@ public:
     };
 
     // Metodos enable y disable
-    void Enable(const sUniformData &uniformData);
+    void Enable(const sUniformData &uniformData, int light_index = 0);
     void Disable();
 };
 
