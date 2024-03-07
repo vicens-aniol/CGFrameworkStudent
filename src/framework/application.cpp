@@ -191,13 +191,13 @@ void Application::OnKeyPressed(SDL_KeyboardEvent event)
 	}
 
 	case SDLK_c:
-		uniformData.texture_flags.x = (uniformData.texture_flags.x == 1.0) ? 0.0 : 1.0; // Toggle uso de textura de color
+		uniformData.texture_flags.x = (uniformData.texture_flags.x == 1.0) ? 0.0 : 1.0; // Textura de color
 		break;
 	case SDLK_s:
-		uniformData.texture_flags.y = (uniformData.texture_flags.y == 1.0) ? 0.0 : 1.0; // Toggle uso de textura especular
+		uniformData.texture_flags.y = (uniformData.texture_flags.y == 1.0) ? 0.0 : 1.0; 
 		break;
 	case SDLK_n:
-		uniformData.texture_flags.z = (uniformData.texture_flags.z == 1.0) ? 0.0 : 1.0; // Toggle uso de textura normal
+		uniformData.texture_flags.z = (uniformData.texture_flags.z == 1.0) ? 0.0 : 1.0; 
 		break;
 	case SDLK_1:
 		uniformData.num_lights = 1;
